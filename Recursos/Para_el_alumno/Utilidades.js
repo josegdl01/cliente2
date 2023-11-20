@@ -19,14 +19,26 @@ function mayusc() {
 }
 
 function numDecimalesAbs(e){
-    if(document.getElementById ){
+    var cadena = this.value;
+    if(cadena.indexOf(",") == -1){
+        return ((e.keyCode >= 48 && e.keyCode <= 57) || e.keyCode == 44);
+    } else {
+        return ((e.keyCode >= 48 && e.keyCode <= 57));
+    }
+}
 
+function enterosConSigno(e){
+    var cadena = this.value;
+    if(cadena.indexOf("-") == -1){
+        "-".concat(cadena);
+    } else {
+        return ((e.keyCode >= 48 && e.keyCode <= 57));
     }
 }
 
 //Solo números
 function limitaNums(e){
-    return ((e.keyCode >= 48 && e.keyCode <= 57) || e.keyCode == 46)
+    return ((e.keyCode >= 48 && e.keyCode <= 57) || e.keyCode == 46);
 } 
 
 function validarFecha(ano, mes, dia){
