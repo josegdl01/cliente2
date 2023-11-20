@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>Envio de parametros con AJAX externo</title>
+	<style type="text/css">
+		.estilo_Tabla_1 {
+			font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+			width: 70%;
+			border-collapse: collapse;
+		}
+
+		.estilo_Tabla_1 td {
+			font-size: 1em;
+			border: 1px solid #98bf21;
+			padding: 4px;
+		}
+
+		.estilo_Tabla_1 th {
+			border: 1px solid #98bf21;
+			font-size: 1.2em;
+			padding: 5px;
+			background-color: #A7C942;
+			color: #ffffff;
+		}
+
+		.estilo_Tabla_1 tr td {
+			color: #000000;
+
+			background-color: #EAF2D3;
+		}
+
+		caption {
+			caption-side: bottom;
+			color: green;
+		}
+	</style>
+
+	<script src="Utilidades.js"></script>
+	<script>
+		var url;
+		var objeto;
+		var enlaceMundo;
+
+		function rellenarTabla(json) {
+			//Igualamos la variable a el parámetro recibido y establecemos los botones (1 vez por petición).
+			objeto = json;
+			document.getElementById("siguiente").disabled = !(objeto.info.next != null);
+			document.getElementById("anterior").disabled = !(objeto.info.prev != null);
+			var personajes;
+			//Recorremos los datos del objeto y creamos el array bidimensional
+			personajes = json.results.map(function (e) {
+				personaje = new Array(e.name, e.status, e.species, e.created, e.gender, e.origin);
+				enlaceMundo = e.origin.url;
+				return personaje;
+			});
+
+			function insertarFila(arrayFila) {
+				var fila = document.createElement("tr");
+				var casilla; var contenido;
+				arrayFila.forEach(function (e) {
+					casilla = document.createElement("td");
+					//Hacemos esta comprobación porque si e.name != null, significa que e es un json del planeta del personaje.
+					if (e.name != null) {
+						//Realizamos los ajustes propios para insertar un enlace.
+						contenido = document.createTextNode(e.name);
+						var enlace = document.createElement("a");
+						enlace.appendChild(contenido);
+						enlace.href = "#";
+						casilla.appendChild(enlace);
+						fila.appendChild(casilla);
+						enlace.onclick = function () {
+							function pintarMundo(objetoMundo) {
+								//Si el planeta no es conocido, no devuelve datos. Por lo cual realizamos esta distinción para que nos escriba que no se conocen datos en caso de que esto ocurra.
+								if (objetoMundo.name !== "unknown") {
+									document.getElementById("datosPlaneta").innerHTML = "";
+									document.getElementById("datosPlaneta").appendChild(document.createElement("br"));
+									document.getElementById("datosPlaneta").innerHTML = "Dimensión: " + objetoMundo.dimension + "/ Tipo: " + objetoMundo.type + "/ Nombre: " + objetoMundo.name;
+								}
+							}
+							//Realizamos la petición solo si el planeta no es "unknown", porque si lo hacemos, nos dará una excepción.
+							if(e.name == "unknown"){
+								document.getElementById("datosPlaneta").innerHTML = "No se conocen datos sobre el planeta de origen de este personaje.";
+							} else {
+								pAjax(e.url, "GET", pintarMundo, null);
+							}
+							
+						}
+						//En caso de que el elemento no sea un planeta, realizamos la función con normalidad.
+					} else {
+						contenido = document.createTextNode(e);
+						casilla.appendChild(contenido);
+						fila.appendChild(casilla);
+					}
+
+				});
+				return fila;
+			}
+
+			var fila;
+			var tabla = document.getElementById("cuerpoTabla");
+			personajes.forEach(function (e) {
+				tabla.appendChild(insertarFila(e));
+			});
+		}
+		//Función que avanza la lista
+		function siguiente() {
+			if (objeto.info.next != null) {
+				document.getElementById("cuerpoTabla").innerHTML = "";
+				url = objeto.info.next;
+				pAjax(url, "GET", rellenarTabla, null);
+			} else {
+				var texto = document.createTextNode("Final de lista");
+				var hijo = document.createElement("p");
+				hijo.appendChild(texto);
+				document.getElementById("cuerpoTabla").appendChild(hijo);
+			}
+		}
+		//Función que retrocede la lista
+		function anterior() {
+			if (objeto.info.prev != null) {
+				document.getElementById("cuerpoTabla").innerHTML = "";
+				url = objeto.info.prev;
+				pAjax(url, "GET", rellenarTabla, null);
+			} else {
+				var texto = document.createTextNode("Final de lista");
+				var hijo = document.createElement("p");
+				hijo.appendChild(texto);
+				document.getElementById("cuerpoTabla").appendChild(hijo);
+			}
+		}
+		window.onload = function () {
+			pAjax("https://rickandmortyapi.com/api/character", "GET", rellenarTabla, null);
+
+			document.getElementById("siguiente").onclick = siguiente;
+
+			document.getElementById("anterior").onclick = anterior;
+		}
+	</script>
+</head>
+
+<body>
+	<h2>Actividad entregable sobre peticiones AJAX por José García De Lemus</h2>
+
+	<div id="salAjax">
+		<table class="estilo_Tabla_1">
+			<thead>
+				<th>Nombre</th>
+				<th>Estado</th>
+				<th>Especie</th>
+				<th>Fecha de creación</th>
+				<th>Género</th>
+				<th>Origen</th>
+			</thead>
+
+			<tbody id="cuerpoTabla"></tbody>
+		</table>
+		<br>
+		<button id="anterior">Anterior</button>
+		<button id="siguiente">Siguiente</button>
+	</div>
+
+	<div id="datosPlaneta">
+
+	</div>
+
+</body>
+
+</html>

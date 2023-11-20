@@ -1,0 +1,55 @@
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv=”Content-Type” content=”text/html; charset=ISO-8859-1″ />
+    <title>Ejercicio 13 - DOM b�sico y atributos XHTML</title>
+    <script>
+
+
+        function anade(num) {
+            //Declaración de variables
+            var elemento = document.createElement("li");
+            var titulo = document.createTextNode("Elemento número " + num + " ");
+            var titulo2 = document.createTextNode("Borrar");
+            var lista = document.getElementById("lista");
+            var boton = document.createElement("button");
+            
+
+            //Añadir elemento a la lista
+            elemento.appendChild(titulo);
+            lista.appendChild(elemento);
+
+            boton.appendChild(titulo2);
+            elemento.appendChild(boton);
+
+			//Añadir funcion al boton
+            var numero = num;
+            boton.onclick = function () {
+                // lista.removeChild(elemento);   ESTE MÉTODO NO ES EL ÓPTIMO, PERO SIRVE
+                this.parentNode.parentNode.removeChild(this.parentNode);
+            }
+        }
+
+        function anadir() {
+            var list = document.getElementsByTagName("li");
+            anade(list.length);
+
+        }
+
+    </script>
+</head>
+
+<body>
+    <ul id="lista">
+        <li>Lorem ipsum dolor sit amet</li>
+        <li>Consectetuer adipiscing elit</li>
+        <li>Sed mattis enim vitae orci</li>
+        <li>Phasellus libero</li>
+        <li>Maecenas nisl arcu</li>
+    </ul>
+    <input type="button" value="A�adir elemento" onclick="anadir(); return false">
+</body>
+
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>Envio de parametros con AJAX externo</title>
+	<style type="text/css">
+		.estilo_Tabla_1 {
+			font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+			width: 70%;
+			border-collapse: collapse;
+		}
+
+		.estilo_Tabla_1 td {
+			font-size: 1em;
+			border: 1px solid #98bf21;
+			padding: 4px;
+		}
+
+		.estilo_Tabla_1 th {
+			border: 1px solid #98bf21;
+			font-size: 1.2em;
+			padding: 5px;
+			background-color: #A7C942;
+			color: #ffffff;
+		}
+
+		.estilo_Tabla_1 tr td {
+			color: #000000;
+
+			background-color: #EAF2D3;
+		}
+
+		caption {
+			caption-side: bottom;
+			color: green;
+		}
+	</style>
+
+	<script src="Utilidades.js"></script>
+	<script type="text/javascript">
+
+		var url;
+		var datos;
+		function rellenarTabla(array) {
+			console.log("datos", array);
+			datos = array;
+			document.getElementById("siguiente").disabled = !(datos.next != null);
+			document.getElementById("anterior").disabled = !(datos.previous != null);
+			var personajes = new Array(10);
+			personajes = array.results.map(function (e) {
+				personaje = new Array(e.name, e.height, e.mass, e.birth_year, e.gender, e.homeworld);
+				return personaje;
+			});
+
+			function insertarFila(arrayFila) {
+				var fila = document.createElement("tr");
+				var casilla; var contenido;
+				arrayFila.forEach(function (e) {
+					casilla = document.createElement("td");
+					contenido = document.createTextNode(e);
+					if (e.includes("https")) {
+						var enlace = document.createElement("a");
+						enlace.appendChild(contenido);
+						enlace.href = "#";
+						casilla.appendChild(enlace);
+						fila.appendChild(casilla);
+
+						enlace.onclick = function () {
+							function pintarMundo(objeto) {
+								console.log(objeto);
+
+								document.getElementById("datosPlaneta").appendChild(document.createElement("br"));
+								document.getElementById("datosPlaneta").appendChild(document.createElement("p").appendChild(document.createTextNode(Object.values(objeto))));
+							}
+							pAjax(e, "GET", pintarMundo, null);
+						}
+					} else {
+						casilla.appendChild(contenido);
+						fila.appendChild(casilla);
+					}
+
+				});
+				return fila;
+			}
+
+			var fila;
+			var tabla = document.getElementById("cuerpoPersonajes");
+			personajes.forEach(function (e) {
+				fila = insertarFila(e);
+				tabla.appendChild(fila);
+				console.log("ok")
+			});
+		}
+
+		function siguiente() {
+				if (datos.next != null) {
+					document.getElementById("cuerpoPersonajes").innerHTML = "";
+					url = datos.next;
+					pAjax(url, "GET", rellenarTabla, null);
+					
+				} else {
+					var texto = document.createTextNode("Final de lista");
+					document.getElementById("siguiente").disabled = true;
+					var hijo = document.createElement("p");
+					hijo.appendChild(texto);
+					document.getElementById("cuerpoPersonajes").appendChild(hijo);
+				}
+			}
+			
+
+			function anterior() {
+				if (datos.previous != null) {
+					document.getElementById("cuerpoPersonajes").innerHTML = "";
+					url = datos.previous;
+					pAjax(url, "GET", rellenarTabla, null);
+					document.getElementById("siguiente").disabled = true;
+				} else {
+					var texto = document.createTextNode("Final de lista");
+					var hijo = document.createElement("p");
+					hijo.appendChild(texto);
+					document.getElementById("cuerpoPersonajes").appendChild(hijo);
+				}
+			}
+
+		window.onload = function () {
+			url = "https://swapi.dev/api/people?format=json";
+
+			pAjax(url, "GET", rellenarTabla, null);
+
+			document.getElementById("siguiente").onclick = siguiente;
+
+			document.getElementById("anterior").onclick = anterior;
+		}
+	</script>
+</head>
+
+<body>
+	<h3>Ejemplo de llamada a la API de STAR WARS</h3>
+	<br />
+
+	<p>
+	<table id="personajes" class="estilo_Tabla_1">
+		<caption>Personajes STAR WARS</caption>
+		<thead>
+			<tr>
+				<th>Nombre</th>
+				<th>Altura</th>
+				<th>Peso</th>
+				<th>Nacimiento</th>
+				<th>Género</th>
+				<th>Homeworld</th>
+			</tr>
+		</thead>
+		<tbody id="cuerpoPersonajes">
+
+		</tbody>
+	</table>
+	</p>
+	<button id="anterior">Anterior</button>
+	<button id="siguiente">Siguiente</button>
+
+	<br />
+	<div id="datosPlaneta">Datos del planeta:</div>
+</body>
+
+</html>

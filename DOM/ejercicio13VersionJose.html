@@ -1,0 +1,43 @@
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv=”Content-Type” content=”text/html; charset=ISO-8859-1″ />
+    <title>Ejercicio 13 - DOM b�sico y atributos XHTML</title>
+    <script>
+        function anade(num) {
+            var enlace = document.createElement("a");
+            var elemento = document.createElement("li");
+            var titulo = document.createTextNode("Elemento número " + num);
+            var lista = document.getElementById("lista");
+            enlace.href = "#";
+            enlace.appendChild(titulo);
+            elemento.appendChild(enlace);
+            
+            elemento.appendChild(enlace);
+
+            
+            lista.appendChild(elemento);
+        }
+
+        function anadir(){
+            var list = document.getElementsByTagName("li");
+            anade(list.length);
+            
+        }
+    </script>
+</head>
+
+<body>
+    <ul id="lista">
+        <li><a href="#">Lorem ipsum dolor sit amet</a></li>
+        <li><a a href="#">Consectetuer adipiscing elit</a></li>
+        <li><a a href="#">Sed mattis enim vitae orci</a></li>
+        <li><a a href="#">Phasellus libero</a></li>
+        <li><a a href="#">Maecenas nisl arcu</a></li>
+    </ul>
+    <input type="button" value="A�adir elemento" onclick="anadir(); return false">
+</body>
+
+</html>

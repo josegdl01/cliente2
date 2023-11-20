@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8" />
+	<title>Ejercicio Listado Personas. AJAX</title>
+	<style type="text/css">
+		h3 {
+			color: red;
+		}
+
+		/* CSS para el formulario:   */
+		.formPersonas {
+			visibility: hidden;
+			position: absolute;
+			top: 20%;
+			left: 20%;
+			z-index: 11;
+			background-color: pink;
+			border: 2px solid maroon;
+			border-radius: 15px;
+			padding: 1em;
+			color: red;
+
+			/*	opacity:0;   */
+			/*	transition: all 1s;   */
+		}
+
+		.formPersonas div label {
+			display: block;
+			margin-top: .5em;
+		}
+
+		.formPersonas .btn {
+			display: block;
+			margin-top: 1em;
+		}
+
+
+		.ver {
+			visibility: visible;
+			opacity: 1;
+		}
+	</style>
+	<script type="text/javascript" src="util2AJAX.js"></script>
+
+	<script type="text/javascript">
+		var url = "servidor.php";
+		var metodo = "post";
+		var objeto;
+
+		function rellenarTabla(json) {
+			document.getElementById("filas_tabla").innerHTML = "";
+			datos = json.map(function (e){
+				var delet = document.createElement("button");
+				delet.appendChild(document.createTextNode("Borrar")); delet.value = "delete";
+				//Guardamos dentro del botón borrar los atributos ID y NOMBRE ya que los usaremos más adelante
+				delet.dataset.id =  e.ID;
+				delet.dataset.nombre =  e.NOMBRE;
+				var edit = document.createElement("button");
+				edit.appendChild(document.createTextNode("Modificar")); edit.value = "edit";
+				//Guardamos dentro del botón editar los atributos ID, NOMBRE, APELLIDOS y DNI ya que los usaremos más adelante
+				edit.dataset.id = e.ID;
+				edit.dataset.nombre = e.NOMBRE;
+				edit.dataset.apellidos = e.APELLIDOS;
+				edit.dataset.dni =  e.DNI;
+				return new Array(e.ID, e.DNI, e.NOMBRE, e.APELLIDOS, delet, edit);
+			});
+			function insertarFila(arrayFila) {
+				var fila = document.createElement("tr");
+				var casilla; var contenido;
+				arrayFila.forEach(function (e) {
+					casilla = document.createElement("td");
+					if(e.value != null){
+						casilla.appendChild(e);
+						if(e.value == "delete"){
+							e.onclick = deleteSQL;
+						} else {
+							e.onclick = mostrarFormMod;
+						}
+					} else {
+						contenido = document.createTextNode(e);
+						casilla.appendChild(contenido);
+					}
+					fila.appendChild(casilla);
+				});
+				return fila;
+			}
+
+			var fila; var tabla = document.getElementById("filas_tabla");
+			datos.forEach(function (e) {
+				fila = insertarFila(e);
+				tabla.appendChild(fila);
+			});
+		}
+
+		//Función que lee datos y rellena tabla
+		function selectSQL(){
+			objeto = {
+				servicio : "listar"
+			};
+			pAjax(url, metodo, rellenarTabla, JSON.stringify(objeto));
+		}
+
+		//Función que borra una fila
+		function deleteSQL(){
+			objeto = {
+				servicio : "borrar",
+				id : this.dataset.id
+			}
+			if (confirm("¿Seguro que desea borrar a " +this.dataset.nombre + "?")){
+				pAjax(url, metodo, rellenarTabla, JSON.stringify(objeto));
+			}
+		}
+
+		//Función que añade o modifica un usuario en base al ID que reciba del botón btAnade
+		function insertUpdateSQL(){
+			if(this.dataset.id == -1){
+				objeto = {
+					servicio : "insertar",
+					dni : document.getElementById("dni").value,
+					nombre : document.getElementById("nombre").value,
+					apellidos : document.getElementById("apellidos").value
+				};
+				pAjax(url, metodo, rellenarTabla, JSON.stringify(objeto));
+				ocultarFormulario();
+			} else {
+				objeto = {
+					servicio : "modificar",
+					dni : document.getElementById("dni").value,
+					nombre : document.getElementById("nombre").value,
+					apellidos : document.getElementById("apellidos").value,
+					id : this.dataset.id
+				};
+				pAjax(url, metodo, rellenarTabla, JSON.stringify(objeto));
+				this.dataset.id = -1;
+				ocultarFormulario();
+			}
+		}
+
+		//Función que cambia el formulario al formato propio de la acción de insertar un usuario.
+		function mostrarFormInsertar(){
+			document.getElementsByTagName("legend")[0].innerHTML = "Alta en el servicio";
+			document.getElementById("btAnade").innerHTML = "Añadir";
+			document.getElementById("dni").value = "12345678Z";
+			document.getElementById("nombre").value = "NOMBRE";
+			document.getElementById("apellidos").value = "APELLIDOS";
+			document.getElementById("formPersonas").style.visibility = "visible";
+		}
+
+		//Función que cambia el formulario al formato propio de la acción de modificar un usuario.
+		function mostrarFormMod(){
+			document.getElementsByTagName("legend")[0].innerHTML = "Modificar usuario";
+			document.getElementById("btAnade").innerHTML = "Modificar";
+			document.getElementById("dni").value = this.dataset.dni;
+			document.getElementById("nombre").value = this.dataset.nombre;
+			document.getElementById("apellidos").value = this.dataset.apellidos;
+			//Se establece el id del botón btAnade al botón de modificar que tiene cada fila (este último tiene en su dataset el ID del personaje de dicha fila)
+			document.getElementById("btAnade").dataset.id = this.dataset.id;
+			document.getElementById("formPersonas").style.visibility = "visible";
+		}
+
+		function ocultarFormulario(){
+			document.getElementById("formPersonas").style.visibility = "hidden";
+			document.getElementById("btAnade").dataset.id = -1;
+		}
+
+		window.onload = function(){
+			selectSQL();
+			document.getElementById("btNuevaPersona").onclick = mostrarFormInsertar;
+			document.getElementById("btCancelar").onclick = ocultarFormulario;
+			document.getElementById("btAnade").onclick = insertUpdateSQL;
+		}
+
+	</script>
+</head>
+
+<body>
+	<h3>Registro de Usuarios</h3>
+
+	<div id="formPersonas" class="formPersonas">
+		<fieldset>
+			<legend>Alta en el servicio</legend>
+			<div>
+				<label for="dni">DNI</label>
+				<input type="text" id="dni" size="10" maxlength="9" value="27473339T" />
+			</div>
+			<div>
+				<label for="nombre">Nombre</label>
+				<input type="text" id="nombre" value="Marco Elio" />
+			</div>
+			<div>
+				<label for="apellidos">Apellidos</label>
+				<input type="text" id="apellidos" size="40" value="García Gomariz" />
+			</div>
+			<div class="btn">
+				<button id="btAnade" data-id="-1">Añadir </button>
+				<button id="btCancelar">Cancelar </button>
+			</div>
+		</fieldset>
+	</div>
+
+
+
+	<br />
+	<button class="btn" id="btNuevaPersona">Nueva persona</button>
+	<br><br>
+	<table id="tabla_personas" border="1">
+		<tr>
+			<th>ID</th>
+			<th>DNI</th>
+			<th>NOMBRE</th>
+			<th>APELLIDOS</th>
+			<th>Borrar</th>
+			<th>Editar</th>
+		</tr>
+
+		<tbody id="filas_tabla">
+
+		</tbody>
+	</table>
+
+	<br><br>
+
+</body>
+
+</html>

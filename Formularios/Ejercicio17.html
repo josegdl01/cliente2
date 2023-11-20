@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script type="text/javascript">
+            function limita(e){
+                if((e.keyCode >= 47 && e.keyCode <= 59 ) || this.value.length >= 5){
+                    return false;
+                }
+            }
+
+            function mostrar(){
+                document.getElementById("resta").innerText = 5 - this.value.length;
+            }
+            window.onload = function(){
+                document.getElementById("texto").onkeypress = limita;
+                document.getElementById("texto").onkeyup = mostrar;
+            }
+        </script>
+    </head>
+
+    <body>
+        <form>
+            <label>Escribe texto:</label>
+            <textarea id="texto"></textarea>
+            <label>Quedan <span id="resta"></span></label>
+        </form>
+    </body>
+</html>

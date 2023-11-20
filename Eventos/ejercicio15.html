@@ -1,0 +1,79 @@
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+	<title>Ejercicio 15 - Informaci�n sobre eventos</title>
+	<style type="text/css">
+		body {
+			font-family: arial, helvetica;
+		}
+
+		#info {
+			width: 160px;
+			border: thin solid silver;
+			padding: .5em;
+			position: fixed;
+		}
+
+		#info h1 {
+			margin: 0;
+		}
+	</style>
+	<script>
+		function muestraInformacion(mensaje) {
+			document.getElementById("info").innerHTML = '<h1>' + mensaje[0] + '</h1>';
+			for (var i = 1; i < mensaje.length; i++) {
+				document.getElementById("info").innerHTML += '<p>' + mensaje[i] + '</p>';
+			}
+		}
+
+		function manejoEvento(evento) {
+			switch (evento.type) {
+				case "mousemove":
+					var cad = "Raton <br />";
+					var pantalla = ("Navegador: " + evento.clientX + ", " + evento.clientY + "<br />");
+					var navegador = ("Página: " + evento.pageX + ", " + evento.pageY + "<br />");
+					var pantalla = ("Pantalla: " + evento.screenX + ", " + evento.screenY);
+					var infoRaton = [cad, pantalla, navegador, pantalla];
+
+					muestraInformacion(infoRaton);
+
+					document.getElementById("info").style.backgroundColor = "#FFFFFF";
+					break;
+
+				case "keypress":
+					var cad = "Teclado<br />";
+					var codigo = "Codigo: " + evento.keyCode + "<br />";
+					var tecla = "Tecla: " + String.fromCharCode(evento.keyCode);
+					var infoTeclado = [cad, codigo, tecla];
+
+					document.getElementById("info").style.backgroundColor = "#CCE6FF";
+
+					muestraInformacion(infoTeclado);
+					break;
+				case "onclick":
+					document.getElementById("info").style.backgroundColor = "#FFFFCC";
+					break;
+				default:
+					break;
+			}
+
+		}
+		window.onload = function () {
+			document.getElementsByTagName("body")[0].onmousemove = manejoEvento;
+			document.getElementsByTagName("body")[0].onkeypress = manejoEvento;
+			document.getElementsByTagName("body")[0].onclick = manejoEvento;
+		}
+	</script>
+</head>
+
+<body>
+	<div id="info"></div>
+	<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+	<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+	<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+</body>
+
+</html>

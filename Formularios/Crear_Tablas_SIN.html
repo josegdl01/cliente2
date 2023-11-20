@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8" />
+	<title>Ejercicio Tablas. CREAR TABLAS V2</title>
+
+	<script type="text/javascript">
+
+		function mostrar(c, f) {
+			alert("Elemento situado en la columna: "+c+" y fila: "+f);
+		}
+
+		function crearTabla() {
+			var tabla = document.createElement("table");
+			var tHead = document.createElement("thead");
+			var tBody = document.createElement("tbody");
+			var contador = 1;
+
+			tabla.appendChild(tHead);
+			tabla.appendChild(tBody);
+
+			for (var i = 0;i < document.getElementById("ncolumnas").value;i++){
+				casillaHead = document.createElement("th");
+				datoHead = document.createTextNode("Columna " + (i+1));
+				casillaHead.appendChild(datoHead);
+				tHead.appendChild(casillaHead);
+			}
+
+			for (var i = 0; i < document.getElementById("nfilas").value; i++) {
+				fila = document.createElement("tr");
+				for (var j = 0; j < document.getElementById("ncolumnas").value; j++) {
+					casilla = document.createElement("td");
+					dato = document.createTextNode("DATO " + contador);
+
+					//AQUÍ ESTAMOS REALIZANDO UNA CLAUSURA
+					function asignar(f, c) {
+						casilla.onclick = function() {
+							mostrar(f, c);
+						}
+					}
+					asignar(j+1, i+1);
+
+					//AQUÍ HACEMOS LO MISMO QUE CON LA CLAUSURA PERO CON UNA FUNCIÓN ANÓNIMA
+					/*
+					(function(f, c) {
+						casilla.onclick = function(){
+							mostrar(f, c);
+						}
+					})(i+1, j+1)*/
+					
+					casilla.appendChild(dato);
+					fila.appendChild(casilla);
+					contador++;
+				}
+				tBody.appendChild(fila);
+			}
+			document.body.appendChild(tabla);
+		}
+
+		window.onload = function () {
+			document.getElementById("btnGenerar").onclick = crearTabla;
+			
+		}
+	</script>
+
+	<style type="text/css">
+		table {
+			width: 100%;
+			border: 1px solid #000;
+		}
+
+		th,
+		td {
+			width: auto;
+			text-align: left;
+			vertical-align: top;
+			border: 1px solid #000;
+		}
+	</style>
+
+</head>
+
+<body>
+	<br>
+	<h2>Ejercicio Tablas. CREAR TABLAS</h2>
+	<h3>Introducir el código javascript necesario, para que al pulsar sobre
+		el botón, se cree una tabla con el número de filas y columnas indicado en los inputs. </h3>
+
+	<h3>A ser posible, generamos la tabla con formato: "thead" y "tbody"</h3>
+
+	<br />
+	<form>
+		<p>
+			<label for="nfilas">Introduce el número de filas:</label>
+			<input type="number" id="nfilas" value="4" min="1" max="1000" />
+			<br />
+			<label for="ncolumnas">Introduce el número de columnas:</label>
+			<input type="number" id="ncolumnas" value="5" min="1" max="1000" />
+		</p>
+		<p>
+			<button id="btnGenerar" type="button">
+				Generar Tabla
+			</button>
+		</p>
+	</form>
+	<br>
+
+	<div id="tabla">
+		Aquí se colocará la tabla que se cree dinámicamente con javascript.
+	</div>
+
+</body>
+
+</html>

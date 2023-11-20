@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8" />
+	<title>Ejercicio. CREAR TABLAS Y ARRAYS</title>
+
+	<style>
+		.claseInput {
+			width: 3em;
+			margin: 0 .5em .5em 0;
+		}
+
+		#salMatriz {
+			margin-left: 1em;
+		}
+
+		table {
+			width: 100%;
+			border: 1px solid #000;
+		}
+
+		th,
+		td {
+			width: auto;
+			text-align: left;
+			vertical-align: top;
+			border: 1px solid #000;
+		}
+	</style>
+
+	<script type="text/javascript">
+
+		function crearMatriz() {
+			var nfilas = document.getElementById("nfilas").value;
+			var ncolumnas = document.getElementById("ncolumnas").value;
+
+			for (var i = 0; i < nfilas; i++) {
+				var salto = document.createElement("br");
+				document.getElementById("salMatriz").appendChild(salto);
+				for (var j = 0; j < ncolumnas; j++) {
+					var input = document.createElement("input");
+					input.className = "claseInput";
+					document.getElementById("salMatriz").appendChild(input);
+				}
+			}
+			document.getElementById("btLlenarMatriz").disabled = false;
+		}
+
+		function llenarMatriz() {
+			inputs = document.getElementById("salMatriz").querySelectorAll("input");
+			inputs.forEach(function (ele) {
+				ele.value = Math.floor(Math.random(1500) * 1000);
+			});
+			document.getElementById("btGenTabla").disabled = false;
+		}
+
+		/*function pintarTabla(arr){
+			function crearFila(arrayColumnas, tipo=""){
+				//Lee qué tipo de elemento pasamos por parámetro y establece el tipo
+				tipo = (tipo == "cabecera") ? "th" : "td";
+				//Crea una fila para llenarla de columnas
+				var fila = document.createElement("tr");
+				var columna; var contenido;
+				//Recorremos el array de columnas añadiendo el contenido de cada elemento a una columna diferente y añadiendolo a la fila que creamos previamente
+				aCol.forEach(function(e){
+					columna=document.createElement(tipo);
+					contenido = document.createTextNode(e);
+					columna.appendChild(contenido);
+					fila.appendChild(columna);
+				});
+				return fila;
+			}
+
+			var fila;
+			var tabla = document.createElement("table");
+			//Recorremos el array recibido por parámetros y pintamos cada fila de la tabla con un elemento del array
+			arr.forEach(function(e){
+				fila = crearFila(e);
+				tabla = appendChild(fila);
+			});
+		}
+
+		function generarArray(f, c) {
+			var array = new Array(f)
+			for (var i = 0; i < array.length; i++) {
+				array[i] = new Array(c);
+				array[i].fill(document.createElement("input"));
+			}
+			console.log(array)
+			return array;
+		}*/
+
+		function condicionarMatriz() {
+			var nfilas = document.getElementById("nfilas").value;
+			var ncolumnas = document.getElementById("ncolumnas").value;
+
+			var tabla = document.createElement("table");
+			var tBody = document.createElement("tbody");
+			var matriz = document.getElementById("salMatriz").querySelectorAll("input");
+			console.log(matriz);
+			var condicion = document.getElementById("nfiltroI").value;
+			var contador = 0;
+
+			tabla.appendChild(tBody);
+
+			for (var i = 0; i < nfilas; i++) {
+				fila = document.createElement("tr");
+				for (var j = 0; j < ncolumnas; j++) {
+					casilla = document.createElement("td");
+					casilla.appendChild(document.createTextNode(matriz[contador].value));
+					fila.appendChild(casilla);
+					contador++;
+				}
+				tBody.appendChild(fila);
+			}
+			document.body.appendChild(tabla);
+		}
+
+
+		window.onload = function () {
+			document.getElementById("btGenMatriz").onclick = crearMatriz;
+			document.getElementById("btLlenarMatriz").onclick = llenarMatriz;
+			document.getElementById("btGenTabla").onclick = condicionarMatriz;
+		}
+
+	</script>
+
+</head>
+
+<body>
+	<br>
+	<h2>Ejercicio Tablas y Arrays</h2>
+	<h3>Introducir el código javascript necesario, para que al pulsar sobre
+		el botón, se cree un array (matriz) de inputs (elementos DOM) con un número fijo de filas y columnas. </h3>
+
+	<br />
+	<form>
+		<p>
+			<label for="nfilas">Introduce el número de filas:</label>
+			<input type="number" id="nfilas" value="15" min="1" max="100" style="width: 3em" />
+			<br />
+			<label for="ncolumnas">Introduce el número de columnas:</label>
+			<input type="number" id="ncolumnas" value="8" min="1" max="100" style="width: 3em" />
+		</p>
+		<p>
+			<button type="button" id="btGenMatriz">
+				Generar Matriz de Inputs
+			</button>
+			<button type="button" id="btLlenarMatriz" disabled>
+				Llenar Matriz de Inputs
+			</button>
+			<button type="button" id="btGenTabla" disabled>
+				Generar tabla
+			</button>
+		</p>
+	</form>
+	<br>
+
+	<div id="salMatriz">
+		(Aquí se colocará la matriz de inputs)
+	</div>
+
+	<h3>
+		Filtro de tabla:
+	</h3>
+
+	<p>
+		Mostrar solo números >
+		<input type="number" id="nfiltroI" value="500" min="1" max="1000" style="width: 4em" />
+	</p>
+
+	<div id="tabla">
+		(Aquí se colocará la tabla que se cree dinámicamente con javascript.)
+	</div>
+
+</body>
+
+</html>

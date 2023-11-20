@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="UTF-8" />
+	<title>Validar Formularios</title>
+	<style type="text/css">
+		span {
+			color: red;
+		}
+	</style>
+	<script src="Utilidades.js"></script>
+
+	<script>
+		
+		function validar() {
+			var bandera = true;
+			var foco = null;
+
+			//Validación del nombre
+			if (document.getElementById("nombre").value.length < 2) {
+				document.getElementById("info_nombre").innerText = "Debes rellenar el nombre con más de dos letras";
+				console.log("Nombre corto");
+				bandera = false;
+				foco = document.getElementById("nombre");
+			} else {
+				document.getElementById("info_nombre").innerText = "";
+			}
+			//Validación de DNI
+			 if (!dniValidar(document.getElementById("dni").value)) {
+				document.getElementById("info_dni").innerText = "Escribe un dni válido";
+				bandera = false;
+				if(!foco) foco = document.getElementById("dni");
+			} else {
+				document.getElementById("info_dni").innerText = "";
+			}
+			//Validación del sexo
+			if (document.getElementById("sexo").value == "") {
+				document.getElementById("info_sexo").innerHTML = "Debes seleccionar una opción";
+				bandera = false;
+				if(!foco) foco = document.getElementById("sexo");
+			} else {
+				document.getElementById("info_sexo").innerHTML = "";
+			}
+			//Validación de la sugerencia
+			if (document.getElementById("sugerencia").value == "") {
+				document.getElementById("info_sugerencia").innerText = "Debes rellenar la sugerencia.";
+				bandera = false;
+				if(!foco) foco = document.getElementById("sugerencia");
+			} else {
+				document.getElementById("info_sugerencia").innerText = "";
+			}
+
+			foco.focus();
+
+			if(!bandera){
+				return false;
+			}
+		}
+
+		window.onload = function () {
+			document.getElementById("formulario_1").onsubmit = validar;
+			document.getElementById("nombre").onkeypress = limitaMinusc;
+			document.getElementById("nombre").onkeyup = mayusc;
+		}
+	</script>
+</head>
+
+<body>
+
+	<h1>Ejercicio Validación de Formularios</h1>
+	<form id="formulario_1">
+		<p>
+		<h3>Formulario de Registro:</h3>
+		<label for="nombre">Nombre: </label>
+		<input type="text" name="nombre" id="nombre" maxlength="25" size="15" />
+		<span id="info_nombre"></span>
+		<div>(Mínimo 2 letras)</div>
+		<br><br>
+
+		<label for="dni">NIF: </label>
+		<input type="text" name="dni" id="dni" maxlength="9" size="9" />
+		<span id="info_dni"></span>
+		<br><br><br>
+
+		<label>Sexo: </label>
+		<select id="sexo">
+			<option value="">Selecciona una opción</option>
+			<option value="F">Femenino</option>
+			<option value="M">Masculino</option>
+			<option value="Y">Ya quisiera yo</option>
+		</select>
+		<span id="info_sexo"></span>
+
+		<br><br><br>
+		<label for="sugerencia">Alguna sugerencia: </label>
+		<textarea id="sugerencia" name="sugerencia"></textarea>
+		<span id="info_sugerencia"></span>
+		<br><br>
+		</p>
+		<p><b>Todos los campos son obligatorios.</b></p>
+		<br>
+		<p>
+			<input type="submit" value="ENVIAR">
+			<br><br>
+			<input type="reset" value="Limpiar">
+
+		</p>
+	</form>
+</body>
+
+</html>

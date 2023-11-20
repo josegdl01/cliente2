@@ -1,0 +1,98 @@
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+	<meta http-equiv=”Content-Type” content=”text/html; charset=UTF-8″ />
+	<title>Ejercicio 15 - Informaci�n sobre eventos</title>
+	<style type="text/css">
+		body {
+			font-family: arial, helvetica;
+		}
+
+		#info {
+			width: 160px;
+			border: thin solid silver;
+			padding: .5em;
+			position: absolute;
+		}
+
+		#info h1 {
+			margin: 0;
+		}
+	</style>
+	<script>
+		var bandera = 1;
+
+		function muestraInformacion(mensaje) {
+			document.getElementById("info").innerHTML = '<h1>' + mensaje[0] + '</h1>';
+			for (var i = 1; i < mensaje.length; i++) {
+				document.getElementById("info").innerHTML += '<p>' + mensaje[i] + '</p>';
+			}
+		}
+
+		function manejoRaton(evento) {
+			var cad = "Raton <br />";
+			var pantalla = ("Navegador: " + evento.clientX + ", " + evento.clientY + "<br />");
+			var navegador = ("Página: " + evento.pageX + ", " + evento.pageY + "<br />");
+			var pantalla = ("Pantalla: " + evento.screenX + ", " + evento.screenY);
+			var infoRaton = [cad, pantalla, navegador, pantalla];
+
+			muestraInformacion(infoRaton);
+
+			document.getElementById("info").style.backgroundColor = "#FFFFFF";
+
+			if (bandera == 0){
+				document.getElementById("info").style.position = "absolute";
+				document.getElementById("info").style.backgroundColor = "#FF0000";
+
+				document.getElementById("info").style.left = evento.clientX - document.getElementById("info").offsetWidth /2 + "px";
+				document.getElementById("info").style.top = evento.clientY - document.getElementById("info").offsetHeight /2 + "px";
+			}
+
+		}
+
+		function manejoTeclado(evento) {
+			var cad = "Teclado<br />";
+			var codigo = "Codigo: " + evento.keyCode + "<br />";
+			var tecla = "Tecla: " + String.fromCharCode(evento.keyCode);
+			var infoTeclado = [cad, codigo, tecla];
+
+			document.getElementById("info").style.backgroundColor = "#CCE6FF";
+
+			muestraInformacion(infoTeclado);
+		}
+
+		function manejoClick(evento) {
+			
+		}
+
+		function inicioMover(){
+			bandera = 0;
+			return false;
+		}
+
+		function finMover(){
+			bandera = 1;
+			return false;
+		}
+
+		window.onload = function () {
+			document.onmousemove = manejoRaton;
+			document.onkeypress = manejoTeclado;
+			document.getElementById("info").onmousedown = inicioMover;
+			document.getElementById("info").onmouseup = finMover;
+
+			
+		}
+	</script>
+</head>
+
+<body>
+	<div id="info"></div>
+	<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+	<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+	<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /> 
+</body>
+
+</html>
