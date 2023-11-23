@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<title>Examen 1ª Evaluación DWEC</title>
+	<style>
+		h3 {
+			color: red;
+		}
+
+		/* CSS para el formulario:   */
+		.formProfes {
+			visibility: hidden;
+			position: absolute;
+			top: 20%;
+			left: 20%;
+			z-index: 11;
+			background-color: pink;
+			border: 2px solid maroon;
+			border-radius: 15px;
+			padding: 1em;
+			color: red;
+		}
+
+		.formProfes div label {
+			display: block;
+			margin-top: .5em;
+		}
+
+		.formProfes .btn {
+			display: block;
+			margin-top: 1em;
+		}
+
+
+		.ver {
+			visibility: visible;
+		}
+
+
+		#deptoDelProfe {
+			font-family: "Lucida Console", "Courier New", monospace;
+			font-size: 1.2em;
+			font-weight: bold;
+			color: blue;
+		}
+	</style>
+
+	<script type="text/javascript" src="util2AJAX.js"></script>
+	<script type="text/javascript">
+		const url = "deptosProfes.php";
+		const metodo = "post";
+
+
+
+		/*
+		const leerDeptSQL = () => {
+			let param = {
+				servicio: "departamentos",
+			};
+			let cabecero = {
+				method: metodo,
+				body: JSON.stringify(param)
+			};
+			fetch(url, cabecero).then(resp => resp.json()).then(json => rellenarTablaDept(json));
+		}
+		*/
+
+		//CREAR FILA DEPARTAMENTOS
+		const crearFilaDept = (array) => {
+			let fila = document.createElement("tr");
+			let casilla;
+			array.forEach(e => {
+				casilla = document.createElement("td");
+				if (e.value != null) {
+					casilla.appendChild(e);
+					e.onclick = leerProfesSQL;
+				} else {
+					let contenido = document.createTextNode(e);
+					casilla.appendChild(contenido);
+				}
+				fila.appendChild(casilla);
+			});
+			return fila;
+		}
+
+
+		//LLENAR TABLA DEPARTAMENTOS
+		const rellenarTablaDept = (json) => {
+			tabla = document.getElementById("detalle_departamentos");
+			tabla.innerHTML = "";
+			let arrayBi = json.map(e => {
+				let verDept = document.createElement("button");
+				verDept.value = "verDepartamento";
+				verDept.appendChild(document.createTextNode("Ver Profesores"));
+				verDept.dataset.departamento = e.ID;
+				return [e.ID, e.NOMBRE, e.DESCRIPCION, verDept];
+			});
+			tabla = document.getElementById("detalle_departamentos");
+			arrayBi.forEach(e => {
+				tabla.appendChild(crearFilaDept(e));
+			});
+		}
+
+		//PETICIÓN QUE RELLENA LA TABLA DE DEPARTAMENTOS
+		const leerDeptSQL = function () {
+			let param = {
+				servicio: "departamentos",
+			};
+			let cabecero = {
+				method: metodo,
+				body: JSON.stringify(param)
+			};
+			fetch(url, cabecero).then(resp => resp.json()).then(json => rellenarTablaDept(json));
+		}
+
+		//PETICIÓN QUE RELLENA LA TABLA DE PROFESORES
+		const leerProfesSQL = (e) => {
+			e.preventDefault();
+			let param = {
+				servicio: "profesores",
+				id_departamento: e.currentTarget.dataset.departamento,
+			};
+			let cabecero = {
+				method: metodo,
+				body: JSON.stringify(param)
+			};
+			fetch(url, cabecero).then(resp => resp.json()).then(json => rellenarTablaProf(json))
+		}
+
+		//CREAR FILA PROFESORES
+		const crearFilaProf = (array) => {
+			let fila = document.createElement("tr");
+			let casilla;
+			array.forEach(e => {
+				casilla = document.createElement("td");
+				if (e.value != null) {
+					casilla.appendChild(e);
+					if (e.value == "borrar") {
+						e.onclick = borrarProfSQL;
+					} else {
+						//e.onclick = ;
+					}
+				} else {
+					let contenido = document.createTextNode(e);
+					casilla.appendChild(contenido);
+				}
+				fila.appendChild(casilla);
+			});
+			return fila;
+		}
+
+
+		//LLENAR TABLA PROFESORES
+		const rellenarTablaProf = (json) => {
+			tabla = document.getElementById("detalle_profesores");
+			tabla.innerHTML = "";
+			let arrayBi = json.map(e => {
+				let borrarProf = document.createElement("button");
+				borrarProf.appendChild(document.createTextNode("Borrar")); borrarProf.value = "borrar";
+				borrarProf.dataset.id = e.ID; borrarProf.dataset.nombre = e.NOMBRE;
+
+				let editProf = document.createElement("button");
+				editProf.appendChild(document.createTextNode("Modificar")); editProf.value = "editar";
+				
+				return [e.ID, e.DNI, e.NOMBRE, e.APELLIDOS, borrarProf, editProf];
+			});
+			tabla = document.getElementById("detalle_profesores");
+			arrayBi.forEach(e => {
+				tabla.appendChild(crearFilaProf(e));
+			});
+		}
+
+		const borrarProfSQL = (e) => {
+			e.preventDefault();
+			if(confirm("¿Seguro que desea borrar a " +e.currentTarget.dataset.nombre+ "?")){
+				let param = {
+					servicio : "borrar",
+					id : e.currentTarget.dataset.id
+				};
+				let cabecero = {
+					method : metodo,
+					body : JSON.stringify(param)
+				};
+				fetch(url, cabecero).then(resp => resp.json()).then(json => rellenarTablaProf(json)).catch(err => console.error(err));
+			}
+
+		}
+
+
+		window.onload = function () {
+			leerDeptSQL();
+		}
+
+	</script>
+
+</head>
+
+<body>
+	<h1>Registro de Usuarios</h1>
+	<form>
+		<br>
+		<h4>Selecciona Departamento:</h4>
+		<p>
+		<div id="departamentos">
+			<table border="1">
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>NOMBRE</th>
+						<th>DESCRIPCION</th>
+						<th>Acción</th>
+					</tr>
+				</thead>
+
+				<tbody id="detalle_departamentos">
+
+				</tbody>
+
+
+			</table>
+		</div>
+		</p>
+
+
+
+		<br />
+		<br />
+		Tabla de Profesores. Departamento de <span id="deptoDelProfe"></span>:
+		<br><br>
+		<button class="btn" id="btNuevaProfe" type="button">Nueva profe</button>
+
+		<p>
+		<div id="profesores">
+			<table border="1">
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>DNI</th>
+						<th>NOMBRE</th>
+						<th>APELLIDOS</th>
+						<th>Eliminar</th>
+						<th>Editar</th>
+					</tr>
+				</thead>
+
+				<tbody id="detalle_profesores">
+
+				</tbody>
+
+
+			</table>
+		</div>
+		</p>
+
+
+		<div id="formProfes" class="formProfes">
+			<fieldset>
+				<legend>Alta en el servicio</legend>
+				<div>
+					<label for="dni">DNI</label>
+					<input type="text" id="dni" size="10" maxlength="9" />
+				</div>
+				<div>
+					<label for="nombre">Nombre</label>
+					<input type="text" id="nombre" />
+				</div>
+				<div>
+					<label for="apellidos">Apellidos</label>
+					<input type="text" id="apellidos" size="40" />
+				</div>
+				<div class="btn">
+					<button id="btAnade" type="button" data-idprofe="-1">Añadir </button>
+					<button id="btCancelar" type="button">Cancelar </button>
+				</div>
+			</fieldset>
+		</div>
+
+	</form>
+
+</body>
+
+</html>
