@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>Ejemplo Web Storage</title>
+	<style>
+		div {
+			border: 2px solid blue;
+			margin: 2em;
+
+			padding: 1em;
+		}
+	</style>
+	<script type="text/javascript">
+		var itemName;
+
+		const addData = () => {
+			itemName = document.getElementById("etiqueta").value;
+			if (itemName != "") {
+				itemName = document.getElementById("etiqueta").value;
+				let itemValue = document.getElementById("dato").value;
+				localStorage.setItem(itemName, itemValue);
+				document.getElementById("etiqueta").value = "";
+				document.getElementById("dato").value = "";
+			} else {
+				console.log("No debes añadir un elemento vacío");
+			}
+
+		}
+
+		const readData = () => {
+			itemName = document.getElementById("etiqueta").value;
+			if (itemName != "") {
+				document.getElementById("sal").innerHTML = localStorage.getItem(itemName);
+				console.log(localStorage.getItem(itemName));
+			} else {
+				document.getElementById("sal").innerHTML = "No se ha encontrado el valor que buscas";
+			}
+		}
+
+		const readAllData = () => {
+			if (localStorage.length == 0) {
+				document.getElementById("contenido").innerHTML = "El almacenamiento local está vacío";
+			} else {
+				document.getElementById("contenido").innerHTML = "";
+				for (let i = 0; i < localStorage.length; i++) {
+					let key = localStorage.key(i);
+					let item = localStorage.getItem(key);
+					document.getElementById("contenido").innerHTML += key +" : "+ item;
+					document.getElementById("contenido").appendChild(document.createElement("br"));
+				}
+			}
+		}
+
+		const deleteData = () => {
+			itemName = document.getElementById("etiqueta").value;
+			localStorage.removeItem(itemName);
+		}
+
+		const deleteAllData = () => {
+			localStorage.clear();
+		}
+
+		window.onload = () => {
+			document.getElementById("btGuardar").onclick = addData;
+			document.getElementById("btMostrar").onclick = readData;
+			document.getElementById("btContenido").onclick = readAllData;
+			document.getElementById("btBorrarDato").onclick = deleteData;
+			document.getElementById("btBorrarTodo").onclick = deleteAllData;
+
+			if(localStorage.visits == null){
+				localStorage.visits = 0;
+			}
+			localStorage.visits++;
+			document.getElementById("nvisitas").innerHTML = localStorage.visits;
+
+		}
+	</script>
+</head>
+
+<body>
+
+	<h3>Esto es un ejermplo de Web Storage</h3>
+
+	<label>Nombre: </label>
+	<input type="text" name="etiqueta" id="etiqueta">
+	<br><br>
+	<label>Dato: </label>
+	<input type="text" name="dato" id="dato">
+	<br /><br />
+
+	<hr>
+	<br><br>
+	<button id="btGuardar">Guardar Dato</button>
+	<button id="btMostrar">Mostrar Dato</button>
+	<button id="btContenido">Contenido del Web Storage</button>
+
+	<button id="btBorrarDato">Borrar Dato</button>
+	<button id="btBorrarTodo">Borrar Todo</button>
+
+	<p>
+	<div id="sal">
+		Aquí ponemos el dato leido del localStorage
+	</div>
+	<div id="nvisitas">
+		Aquí se muestra el número de visitas
+	</div>
+	</p>
+	<p>
+	<div id="contenido">
+		Contenido de todo el Web Storage
+	</div>
+	</p>
+
+</body>
+
+</html>
