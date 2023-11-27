@@ -22,8 +22,16 @@
 		</style>
 		
     <script type="text/javascript">
+
+		const saveText = () => {
+			let texto = document.getElementById("texto").innerHTML;
+			localStorage.setItem("item", texto)
+		}
       
-      
+      window.onload = () => {
+		document.getElementById("guardar"),addEventListener("click", saveText);
+		document.getElementById("guardar"),addEventListener("click", negrita);
+	  }
     </script>
   </head>
   
