@@ -51,21 +51,7 @@
 	<script type="text/javascript">
 		const url = "deptosProfes.php";
 		const metodo = "post";
-
-
-
-		/*
-		const leerDeptSQL = () => {
-			let param = {
-				servicio: "departamentos",
-			};
-			let cabecero = {
-				method: metodo,
-				body: JSON.stringify(param)
-			};
-			fetch(url, cabecero).then(resp => resp.json()).then(json => rellenarTablaDept(json));
-		}
-		*/
+		var depart = 0;
 
 		//CREAR FILA DEPARTAMENTOS
 		const crearFilaDept = (array) => {
@@ -85,7 +71,6 @@
 			return fila;
 		}
 
-
 		//LLENAR TABLA DEPARTAMENTOS
 		const rellenarTablaDept = (json) => {
 			tabla = document.getElementById("detalle_departamentos");
@@ -104,7 +89,7 @@
 		}
 
 		//PETICIÓN QUE RELLENA LA TABLA DE DEPARTAMENTOS
-		const leerDeptSQL = function () {
+		const leerDeptSQL = () => {
 			let param = {
 				servicio: "departamentos",
 			};
@@ -140,7 +125,7 @@
 					if (e.value == "borrar") {
 						e.onclick = borrarProfSQL;
 					} else {
-						//e.onclick = ;
+						e.onclick = mostrarFormularioMod;
 					}
 				} else {
 					let contenido = document.createTextNode(e);
@@ -151,19 +136,20 @@
 			return fila;
 		}
 
-
 		//LLENAR TABLA PROFESORES
 		const rellenarTablaProf = (json) => {
 			tabla = document.getElementById("detalle_profesores");
 			tabla.innerHTML = "";
 			let arrayBi = json.map(e => {
+				depart = e.ID_DEPARTAMENTO;
 				let borrarProf = document.createElement("button");
 				borrarProf.appendChild(document.createTextNode("Borrar")); borrarProf.value = "borrar";
-				borrarProf.dataset.id = e.ID; borrarProf.dataset.nombre = e.NOMBRE;
+				borrarProf.dataset.id = e.ID; borrarProf.dataset.nombre = e.NOMBRE; borrarProf.dataset.departamento = e.ID_DEPARTAMENTO;
 
 				let editProf = document.createElement("button");
 				editProf.appendChild(document.createTextNode("Modificar")); editProf.value = "editar";
-				
+				editProf.dataset.id = e.ID; editProf.dataset.nombre = e.NOMBRE; editProf.dataset.apellidos = e.APELLIDOS; editProf.dataset.dni = e.DNI; 
+
 				return [e.ID, e.DNI, e.NOMBRE, e.APELLIDOS, borrarProf, editProf];
 			});
 			tabla = document.getElementById("detalle_profesores");
@@ -172,25 +158,99 @@
 			});
 		}
 
+		//FUNCIÓN QUE BORRA UNA FILA
 		const borrarProfSQL = (e) => {
 			e.preventDefault();
-			if(confirm("¿Seguro que desea borrar a " +e.currentTarget.dataset.nombre+ "?")){
+			if (confirm("¿Seguro que desea borrar a " + e.currentTarget.dataset.nombre + "?")) {
 				let param = {
-					servicio : "borrar",
-					id : e.currentTarget.dataset.id
+					servicio: "eliminaProfe",
+					id: e.currentTarget.dataset.id,
+					id_departamento : e.currentTarget.dataset.departamento
 				};
 				let cabecero = {
-					method : metodo,
-					body : JSON.stringify(param)
+					method: metodo,
+					body: JSON.stringify(param)
 				};
-				fetch(url, cabecero).then(resp => resp.json()).then(json => rellenarTablaProf(json)).catch(err => console.error(err));
+				fetch(url, cabecero).then(resp => resp.json()).then(json => rellenarTablaProf(json))
 			}
-
 		}
 
+		//FUNCIÓN QUE AÑADE O MODIFICA UN PROFESOR
+		const addInsertProfSQL = (e) => {
+				if (e.currentTarget.dataset.idprofe == -1){
+					let param = {
+						servicio : "anadeProfe",
+						dni : document.getElementById("dni").value,
+						nombre : document.getElementById("nombre").value,
+						apellidos : document.getElementById("apellidos").value,
+						id_departamento : depart
+
+					};
+					console.log("Modifica", param);
+					let cabecero = {
+						method : metodo,
+						body : JSON.stringify(param)
+					};
+					console.log("Añadir",JSON.stringify(param));
+					fetch(url, cabecero).then(resp => resp.json()).then(json => rellenarTablaProf(json)).catch(err => console.error(err));
+				} else {
+					let param = {
+						servicio : "modificaProfe",
+						id : e.currentTarget.dataset.idprofe,
+						nombre : document.getElementById("nombre").value,
+						apellidos : document.getElementById("apellidos").value,
+						dni : document.getElementById("dni").value,
+						id_departamento : depart
+
+					};
+					console.log("Modifica", param);
+					let cabecero = {
+						method : metodo,
+						body : JSON.stringify(param)
+					};
+					console.log("Modifica", JSON.stringify(param));
+					fetch(url, cabecero).then(resp => resp.json()).then(json => rellenarTablaProf(json)).catch(err => console.error(err));
+					document.getElementById("btAnade").dataset.idprofe = -1;
+				}
+				ocultarFormulario();
+		}
+
+		//Función que oculta el formulario
+		function ocultarFormulario() {
+			document.getElementById("formProfes").style.visibility = "hidden";
+		}
+
+		//Función que muestra el formulario de Añadir un profesor (Sólo en caso de que el departamento no sea 0)
+		function mostrarFormularioAnade() {
+			if (depart != 0) {
+				document.getElementsByTagName("legend")[0].innerHTML = "Alta en el servicio";
+				document.getElementById("btAnade").innerHTML = "Añadir";
+				document.getElementById("dni").value = "dni";
+				document.getElementById("nombre").value = "nombre";
+				document.getElementById("apellidos").value = "apellidos";
+				document.getElementById("formProfes").style.visibility = "visible";
+			} else {
+				document.getElementById("deptoDelProfe").innerHTML = "Selecciona departamento";
+			}
+		}
+
+		function mostrarFormularioMod(e) {
+			e.preventDefault();
+			console.log(e.currentTarget.dataset.id);
+			document.getElementsByTagName("legend")[0].innerHTML = "Modificar Profesor";
+			document.getElementById("btAnade").innerHTML = "Modificar";
+			document.getElementById("btAnade").dataset.idprofe = e.currentTarget.dataset.id;
+			document.getElementById("dni").value = e.currentTarget.dataset.dni;
+			document.getElementById("nombre").value = e.currentTarget.dataset.nombre;
+			document.getElementById("apellidos").value = e.currentTarget.dataset.apellidos;
+			document.getElementById("formProfes").style.visibility = "visible";
+		}
 
 		window.onload = function () {
 			leerDeptSQL();
+			document.getElementById("btNuevaProfe").onclick = mostrarFormularioAnade;
+			document.getElementById("btAnade").onclick = addInsertProfSQL;
+			document.getElementById("btCancelar").onclick = ocultarFormulario;
 		}
 
 	</script>

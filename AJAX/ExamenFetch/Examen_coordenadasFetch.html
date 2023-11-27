@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="UTF-8" />
+	<title>Examen Coordenadas</title>
+	<style type="text/css">
+		span {
+			color: red;
+		}
+
+		.resultado {
+			text-align: center;
+			font-size: 1.5em;
+			color: maroon;
+		}
+	</style>
+	<script src="util2AJAX.js"></script>
+	<script type="text/javascript">
+		var url = "servicio_coordenadas.php";
+		var metodo = "post";
+		var columna, fila;
+
+		const pedirFila = () => {
+			let param = {
+				servicio : "rangoFilas"
+			};
+			let cabecero = {
+				method : metodo,
+				body : JSON.stringify(param)
+			};
+			console.log("pedirFila", cabecero, param);
+			//¿?
+			fetch(url, cabecero).then(resp => resp.text()).then(json => pedirColumna(json));
+		}
+
+		const pedirColumna = (f) => {
+			fila = f[Math.floor(Math.random() * f.length)];
+			console.log("fila", fila);
+			let param = {
+				servicio : "rangoColumnas"
+			};
+			let cabecero = {
+				method : metodo,
+				body : JSON.stringify(param)
+			};
+			console.log("pedirColumna", cabecero, param);
+			fetch(url, cabecero).then(resp => resp.text()).then(json => callBackColumna(json));
+		}
+
+		const callBackColumna = (c) => {
+			columna = c[Math.floor(Math.random() * c.length)];
+			console.log("columna", columna);
+			document.getElementById("coordenadas").innerHTML = fila + columna;
+		}
+
+		const validar = () => {
+			let param = {
+				servicio : "elemento",
+				fila : fila,
+				columna : columna
+			};
+			let cabecero = {
+				method : metodo,
+				body : JSON.stringify(param)
+			};
+			console.log("validar", param);
+			fetch(url, cabecero).then(resp => resp.text()).then(json => validaCallBack(json))
+		}
+
+		const validaCallBack = (e) => {
+			console.log(e);
+			if (document.getElementById("valor").value == e){
+				document.body.querySelectorAll("p")[1].innerHTML = "Resultado correcto";
+				console.log("correcto");
+			} else {
+				document.body.querySelectorAll("p")[1].innerHTML = "Resultado incorrecto";
+				console.log("incorrecto");
+			}
+		}
+
+
+		window.onload = () =>{
+			pedirFila();
+			document.getElementById("btValidar").onclick = validar;
+		} 
+		
+
+
+
+	</script>
+</head>
+
+<body>
+
+	<h1>Acceso al sistema</h1>
+	<form>
+		<p>
+		<h3>Sistema de validación según tarjeta de coordenadas:</h3>
+		<label for="valor">Introduzca el valor para las coordenadas: <span id="coordenadas"> </span> </label>
+		<br>
+		<input type="text" id="valor" maxlength="2" size="1" autofocus />
+		<span id="info_valor"> </span>
+		<br><br>
+		</p>
+		<p class="resultado">
+
+		</p>
+		<p>
+			<input type="button" id="btValidar" value="ACEPTAR">
+		</p>
+	</form>
+
+</body>
+
+</html>
