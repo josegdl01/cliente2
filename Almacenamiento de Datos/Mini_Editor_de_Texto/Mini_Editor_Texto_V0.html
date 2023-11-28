@@ -1,16 +1,18 @@
 <!DOCTYPE html>
 <html>
-  <head>   
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> 
-    <title>Plantilla</title>
-		
-		<style type="text/css">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>Plantilla</title>
+
+	<style type="text/css">
 		#texto {
 			width: 700px;
 			height: 500px;
 			border: 1px solid blue;
 			padding: 0.4em;
 		}
+
 		span {
 			border: 2px solid red;
 			margin: 1.1em;
@@ -18,38 +20,148 @@
 			cursor: pointer;
 			background-color: pink;
 		}
-		
-		</style>
-		
-    <script type="text/javascript">
 
-		const saveText = () => {
-			let texto = document.getElementById("texto").innerHTML;
-			localStorage.setItem("item", texto)
+		img {
+			width: 400px;
+			height: 400px;
 		}
-      
-      window.onload = () => {
-		document.getElementById("guardar"),addEventListener("click", saveText);
-		document.getElementById("guardar"),addEventListener("click", negrita);
-	  }
-    </script>
-  </head>
-  
-  <body>
 
-    <h3>Procesador de Textos</h3>
-		<p>
-			<span id="guardar">Guardar</span>
-			<span id="negrita">Negrita</span>
-			<span id="cursiva">Cursiva</span>
-			<span id="subrayado">Subrayado</span>
-			<span id="color">Color</span>
-		</p>
-		<div id="texto" contentEditable="true" spellcheck="true">
-			Esto es un texto de prueba para no tener que estar escribiendo.
-		</div>
-		<p id="sal"></p>
-    
-  </body>
-  
+		#aviso {
+			color: red;
+		}
+	</style>
+
+	<script type="text/javascript">
+
+		//FUNCIONES DE LOCALSTORAGE
+		const showText = (e) => {
+			document.getElementById("texto").innerHTML = "";
+			let text = localStorage.getItem(e.currentTarget.innerHTML);
+			console.log(text);
+			document.getElementById("texto").innerHTML = text;
+			document.getElementById("nombreItem").value = e.currentTarget.innerHTML;
+		}
+
+		const fillList = () => {
+			document.getElementById("texto").innerHTML = "";
+			document.getElementById("nombreItem").value = "";
+			let list = document.getElementById("items");
+			list.innerHTML = "";
+			for (let i = 0; i < localStorage.length; i++) {
+				let itemList = document.createElement("option");
+				let key = localStorage.key(i);
+				itemList.appendChild(document.createTextNode(key));
+				document.getElementById("items").appendChild(itemList);
+				itemList.onclick = showText;
+				itemList.ondblclick = (e) => {
+					if (confirm("¿Desea borrar este elemento?")) {
+						localStorage.removeItem(e.currentTarget.innerHTML);
+						fillList();
+						document.getElementById("texto").innerHTML = "";
+					}
+				};
+			}
+		}
+
+		const saveText = (e) => {
+			let texto = document.getElementById("texto").innerHTML;
+			let nombreItem = document.getElementById("nombreItem").value;
+			let repeated;
+			if (texto == "" || nombreItem == "") {
+				document.getElementById("nombreItem").value = "Rellene ambos parámetros";
+			} else {
+				for (let i = 0; i < localStorage.length; i++) {
+					let key = localStorage.key(i);
+					if (nombreItem == key) {
+						document.getElementById("aviso").innerText = "¡¡Ese elemento ya existe!!";
+						console.log("Repetido: " + nombreItem, key);
+						repeated = true;
+						e.preventDefault();
+					}
+				}
+				if (!repeated) {
+					localStorage.setItem(nombreItem, texto);
+					document.getElementById("guardar").disabled = true;
+					document.getElementById("aviso").innerHTML = "";
+
+				}
+			}
+
+			fillList();
+
+		}
+
+		//MANIPULACIÓN DEL TEXTO
+		const makeBold = (e) => {
+			document.execCommand("bold", false, null);
+			e.preventDefault();
+		}
+
+		const makeItalic = (e) => {
+			document.execCommand("italic", false, null);
+			e.preventDefault();
+		}
+
+		const makeUnderlined = (e) => {
+			document.execCommand("underline", false, null);
+			e.preventDefault();
+		}
+
+		const colorSelect = (e) => {
+			document.execCommand("foreColor", false, "blue");
+			e.preventDefault();
+		}
+
+		const insertPic = (e) => {
+			document.execCommand("insertImage", false, "foto.jfif");
+			e.preventDefault();
+		}
+
+		const centerSelect = (e) => {
+			document.execCommand("justifyCenter", false, null);
+			e.preventDefault();
+		}
+
+		window.onload = () => {
+			fillList();
+			document.getElementById("guardar").addEventListener("click", saveText);
+			document.getElementById("negrita").addEventListener("mousedown", makeBold);
+			document.getElementById("cursiva").addEventListener("mousedown", makeItalic);
+			document.getElementById("subrayado").addEventListener("mousedown", makeUnderlined);
+			document.getElementById("color").addEventListener("mousedown", colorSelect);
+			document.getElementById("pic").addEventListener("mousedown", insertPic);
+			document.getElementById("centrar").addEventListener("mousedown", centerSelect);
+		}
+	</script>
+</head>
+
+<body>
+
+	<h3>Procesador de Textos</h3>
+	<label>
+		Nombre del texto <input id="nombreItem" type="text">
+	</label>
+	<label>
+		Seleccione un texto
+	</label>
+	<select name="items" id="items" multiple>
+
+	</select>
+	<p>
+		<span id="guardar">Guardar</span>
+		<span id="negrita">Negrita</span>
+		<span id="cursiva">Cursiva</span>
+		<span id="subrayado">Subrayado</span>
+		<span id="color">Color</span>
+		<span id="pic">Imagen</span>
+		<span id="centrar">Centrar</span>
+	</p>
+	<p id="aviso"></p>
+	<div id="texto" contentEditable="true" spellcheck="true">
+		Esto es un texto de prueba para no tener que estar escribiendo.
+	</div>
+	<p id="sal"></p>
+
+</body>
+
 </html>
