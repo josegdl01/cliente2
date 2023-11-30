@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>Provincias Localidades</title>
+
+  <script>
+
+    /*Necesitamos siempre (para realizar este tipo de proyectos) lo siguiente: 
+        La URL donde se encuentra el servidor
+        El metodo que se tiene que aplicar para tomar los datos
+        La funcion donde se dirigiran esos datos
+        Los parametros que se pasaran */
+
+    // Función para obtener y mostrar las provincias
+    function pedirProvincias() {
+      // Paso 1: Hacer una solicitud GET al servidor para obtener la lista de provincias
+      fetch("http://localhost/nuevo_provincias_localidades/servidor.php?servicio=provincias", { method: "GET" })
+        // Paso 2: Parsear la respuesta como JSON
+        .then(jsonResponse => jsonResponse.json())
+        // Paso 3: Llamar a la función mostrarProvincias con los datos obtenidos
+        .then(data => mostrarProvincias(data));
+    }
+
+    // Función para mostrar las provincias en el primer menú desplegable
+    function mostrarProvincias(provincias) {
+      console.log(provincias);
+      let elementoProvincia = document.getElementById("provincia");
+      let opcion;
+
+      // Creamos el primer elemento de nuestro menú desplegable
+      opcion = document.createElement("option");
+      opcion.innerHTML = "Elige una provincia"
+      opcion.value = "1";
+      elementoProvincia.appendChild(opcion);
+
+      // Creamos los elementos restantes del menú desplegable
+      provincias.forEach(e => {
+        opcion = document.createElement("option");
+        opcion.innerHTML = e.NOMBRE;
+        opcion.value = e.CODIGO;
+        elementoProvincia.appendChild(opcion);
+      });
+    }
+
+    // Función para obtener y mostrar las localidades
+    function pedirLocalidad() {
+      fetch("http://localhost/nuevo_provincias_localidades/servidor.php?servicio=localidades&codigop=" + this.value, { method: "GET" })
+        .then(jsonResponse => jsonResponse.json())
+        .then(data => mostrarLocalidad(data));
+    }
+
+    // Función para mostrar las localidades en el segundo menú desplegable
+    function mostrarLocalidad(localidades) {
+      console.log(localidades);
+      let elementoLocalidades = document.getElementById("localidad");
+      let opcion;
+
+      // Eliminamos todas las opciones excepto la primera
+      elementoLocalidades.options.length = 1;
+
+      // Creamos las nuevas opciones del menú desplegable
+      localidades.forEach(e => {
+        opcion = document.createElement("option");
+        opcion.innerHTML = e.NOMBRE;
+        opcion.value = e.CODIGO;
+        elementoLocalidades.appendChild(opcion);
+      });
+    }
+
+    // Evento que se ejecuta cuando la página ha cargado completamente
+    window.onload = function () {
+      // Llamamos a la función para obtener y mostrar las provincias
+      pedirProvincias();
+      // Configuramos un evento para el cambio en el primer menú desplegable
+      document.getElementById("provincia").onchange = pedirLocalidad;
+    }
+
+  </script>
+
+</head>
+
+<body>
+  <h2>Ejemplo proyecto web con JAVA y AJAX</h2>
+
+  <label for="provincia">Provincia:</label>
+  <select id="provincia">
+
+  </select>
+  <br><br>
+
+  <label for="localidad">Localidad</label>
+  <select id="localidad">
+    <option value="-1">Seleccione Provincia</option>
+    <!--<option> value=codigo de provincia> nombre provincia</option>-->
+    <!--
+    <option value = 1>seleccionar provincias</option>
+  -->
+  </select>
+  <br><br>
+  <div id="sal">
+
+  </div>
+
+</body>
+
+</html>

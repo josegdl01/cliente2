@@ -1,4 +1,4 @@
-<?php
+	<?php
 header('Content-Type: application/json');
 include("conexion.php");
 $conn = Conectar2("ajax", "root", "");
@@ -105,6 +105,8 @@ function selPersonaID($id) {
 		die($e->getMessage());
 	}	
 }
+
+
 ?>
 
 

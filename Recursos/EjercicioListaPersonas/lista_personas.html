@@ -21,9 +21,6 @@
 			border-radius: 15px;
 			padding: 1em;
 			color: red;
-
-			/*	opacity:0;   */
-			/*	transition: all 1s;   */
 		}
 
 		.formPersonas div label {
@@ -36,143 +33,171 @@
 			margin-top: 1em;
 		}
 
-
 		.ver {
 			visibility: visible;
 			opacity: 1;
 		}
 	</style>
-	<script type="text/javascript" src="util2AJAX.js"></script>
-
+	<!-- <script type="text/javascript" src="peticionAJAX.js"></script> -->
 	<script type="text/javascript">
-		var url = "servidor.php";
-		var metodo = "post";
-		var objeto;
 
-		function rellenarTabla(json) {
-			document.getElementById("filas_tabla").innerHTML = "";
-			datos = json.map(function (e){
-				var delet = document.createElement("button");
-				delet.appendChild(document.createTextNode("Borrar")); delet.value = "delete";
-				//Guardamos dentro del botón borrar los atributos ID y NOMBRE ya que los usaremos más adelante
-				delet.dataset.id =  e.ID;
-				delet.dataset.nombre =  e.NOMBRE;
-				var edit = document.createElement("button");
-				edit.appendChild(document.createTextNode("Modificar")); edit.value = "edit";
-				//Guardamos dentro del botón editar los atributos ID, NOMBRE, APELLIDOS y DNI ya que los usaremos más adelante
-				edit.dataset.id = e.ID;
-				edit.dataset.nombre = e.NOMBRE;
-				edit.dataset.apellidos = e.APELLIDOS;
-				edit.dataset.dni =  e.DNI;
-				return new Array(e.ID, e.DNI, e.NOMBRE, e.APELLIDOS, delet, edit);
+		// Comentario: Variables para la URL y el método de la petición AJAX
+		var url = "servidor.php";
+		var metodo = "POST";
+
+		// Comentario: Función que llena la tabla con los datos obtenidos del servidor
+		function rellenarTabla(array) {
+			console.log(array);
+			var datos_api, fila;
+			var boton_borrar = document.createElement("button");
+			var boton_actualizar = document.createElement("button");
+
+			// Comentario: Mapea los datos para transformar la array de objetos a una array bidimensional
+			datos_api = array.map(function (e) {
+				// Comentario: Asigna el ID al botón de actualizar
+				boton_actualizar.dataset.id = e.ID;
+				return new Array(e.ID, e.DNI, e.NOMBRE, e.APELLIDOS, boton_borrar, boton_actualizar);
 			});
+
+			// Comentario: Función que inserta una fila en la tabla
 			function insertarFila(arrayFila) {
-				var fila = document.createElement("tr");
-				var casilla; var contenido;
+				fila = document.createElement("tr");
+				var casilla, contenido;
+
 				arrayFila.forEach(function (e) {
 					casilla = document.createElement("td");
-					if(e.value != null){
-						casilla.appendChild(e);
-						if(e.value == "delete"){
-							e.onclick = deleteSQL;
-						} else {
-							e.onclick = mostrarFormMod;
-						}
+					if (e == boton_borrar) {
+						contenido = document.createElement('button');
+						contenido.innerHTML = "Borrar";
+						contenido.onclick = function () {
+							// Comentario: Llama a la función para borrar elemento
+							borrarElemento(arrayFila[0]);
+						};
+					} else if (e == boton_actualizar) {
+						contenido = document.createElement('button');
+						contenido.innerHTML = "Editar";
+						contenido.onclick = function () {
+							// Comentario: Llama a la función para mostrar el formulario de modificar
+							mostrarTablaModificar(arrayFila);
+						};
 					} else {
 						contenido = document.createTextNode(e);
-						casilla.appendChild(contenido);
 					}
+					casilla.appendChild(contenido);
 					fila.appendChild(casilla);
 				});
 				return fila;
 			}
 
-			var fila; var tabla = document.getElementById("filas_tabla");
-			datos.forEach(function (e) {
+			var tabla = document.getElementById("filas_tabla");
+			tabla.innerHTML = "";
+			// Comentario: Inserta filas en la tabla
+			datos_api.forEach(function (e) {
 				fila = insertarFila(e);
 				tabla.appendChild(fila);
 			});
 		}
 
-		//Función que lee datos y rellena tabla
-		function selectSQL(){
-			objeto = {
-				servicio : "listar"
-			};
-			pAjax(url, metodo, rellenarTabla, JSON.stringify(objeto));
+		// Comentario: Función que oculta el formulario
+		function ocultarTabla() {
+			document.getElementById("formPersonas").classList.remove("ver");
 		}
 
-		//Función que borra una fila
-		function deleteSQL(){
-			objeto = {
-				servicio : "borrar",
-				id : this.dataset.id
-			}
-			if (confirm("¿Seguro que desea borrar a " +this.dataset.nombre + "?")){
-				pAjax(url, metodo, rellenarTabla, JSON.stringify(objeto));
-			}
-		}
-
-		//Función que añade o modifica un usuario en base al ID que reciba del botón btAnade
-		function insertUpdateSQL(){
-			if(this.dataset.id == -1){
-				objeto = {
-					servicio : "insertar",
-					dni : document.getElementById("dni").value,
-					nombre : document.getElementById("nombre").value,
-					apellidos : document.getElementById("apellidos").value
-				};
-				pAjax(url, metodo, rellenarTabla, JSON.stringify(objeto));
-				ocultarFormulario();
-			} else {
-				objeto = {
-					servicio : "modificar",
-					dni : document.getElementById("dni").value,
-					nombre : document.getElementById("nombre").value,
-					apellidos : document.getElementById("apellidos").value,
-					id : this.dataset.id
-				};
-				pAjax(url, metodo, rellenarTabla, JSON.stringify(objeto));
-				this.dataset.id = -1;
-				ocultarFormulario();
-			}
-		}
-
-		//Función que cambia el formulario al formato propio de la acción de insertar un usuario.
-		function mostrarFormInsertar(){
-			document.getElementsByTagName("legend")[0].innerHTML = "Alta en el servicio";
+		// Comentario: Función que muestra el formulario para añadir una nueva persona
+		function mostrarTablaCrear() {
+			document.getElementById("formPersonas").classList.add("ver");
+			document.querySelector("#formPersonas legend").innerHTML = "Añadir Persona";
 			document.getElementById("btAnade").innerHTML = "Añadir";
-			document.getElementById("dni").value = "12345678Z";
-			document.getElementById("nombre").value = "NOMBRE";
-			document.getElementById("apellidos").value = "APELLIDOS";
-			document.getElementById("formPersonas").style.visibility = "visible";
+			document.getElementById("dni").value = "";
+			document.getElementById("nombre").value = "";
+			document.getElementById("apellidos").value = "";
+			document.getElementById("btAnade").dataset.id = "-1";
 		}
 
-		//Función que cambia el formulario al formato propio de la acción de modificar un usuario.
-		function mostrarFormMod(){
-			document.getElementsByTagName("legend")[0].innerHTML = "Modificar usuario";
+		// Comentario: Función que muestra el formulario para modificar una persona
+		function mostrarTablaModificar(arrayFila) {
+			document.getElementById("formPersonas").classList.add("ver");
 			document.getElementById("btAnade").innerHTML = "Modificar";
-			document.getElementById("dni").value = this.dataset.dni;
-			document.getElementById("nombre").value = this.dataset.nombre;
-			document.getElementById("apellidos").value = this.dataset.apellidos;
-			//Se establece el id del botón btAnade al botón de modificar que tiene cada fila (este último tiene en su dataset el ID del personaje de dicha fila)
-			document.getElementById("btAnade").dataset.id = this.dataset.id;
-			document.getElementById("formPersonas").style.visibility = "visible";
+			document.querySelector("#formPersonas legend").innerHTML = "Modificar Persona";
+
+			// Comentario: Rellena los campos del formulario con los valores de la fila
+			document.getElementById("dni").value = arrayFila[1];
+			document.getElementById("nombre").value = arrayFila[2];
+			document.getElementById("apellidos").value = arrayFila[3];
+
+			// Comentario: Guarda el ID como atributo en el botón
+			document.getElementById("btAnade").dataset.id = arrayFila[0];
 		}
 
-		function ocultarFormulario(){
-			document.getElementById("formPersonas").style.visibility = "hidden";
-			document.getElementById("btAnade").dataset.id = -1;
+		// Comentario: Función que añade o modifica un elemento en la tabla
+		function annadirElemento(e) {
+			if (this.dataset.id != "-1") { // Comentario: Estamos modificando
+				var objeto_crear = {
+					servicio: "modificar",
+					id: this.dataset.id,
+					dni: document.getElementById("dni").value,
+					nombre: document.getElementById("nombre").value,
+					apellidos: document.getElementById("apellidos").value
+				};
+			} else { // Comentario: Estamos añadiendo
+				var objeto_crear = {
+					servicio: "insertar",
+					dni: document.getElementById("dni").value,
+					nombre: document.getElementById("nombre").value,
+					apellidos: document.getElementById("apellidos").value
+				};
+			}
+			var parametro_crear = JSON.stringify(objeto_crear);
+			// Comentario: Llama a la función para hacer la petición AJAX y rellenar la tabla
+			// pAJAX(url, metodo, rellenarTabla, parametro_crear);
+			fetch(url, { method: metodo, body: parametro_crear })
+				.then(jsonResponse => jsonResponse.json())
+				.then(data => rellenarTabla(data));
+			this.dataset.id = -1;
+			// Comentario: Oculta el formulario después de añadir o modificar
+			ocultarTabla();
 		}
 
-		window.onload = function(){
-			selectSQL();
-			document.getElementById("btNuevaPersona").onclick = mostrarFormInsertar;
-			document.getElementById("btCancelar").onclick = ocultarFormulario;
-			document.getElementById("btAnade").onclick = insertUpdateSQL;
+		// Comentario: Función que borra un elemento de la tabla
+		function borrarElemento(id) {
+			var alerta = confirm("¿Desea borrar el elemento?");
+			if (alerta) {
+				var objeto_borrar = {
+					servicio: "borrar",
+					id: id
+				};
+				var parametro_borrar = JSON.stringify(objeto_borrar);
+				// Comentario: Llama a la función para hacer la petición AJAX y rellenar la tabla
+				// pAJAX(url, metodo, rellenarTabla, parametro_borrar);
+				fetch(url, {
+					method: metodo, body:
+						parametro_borrar
+				})
+					.then(jsonResponse => jsonResponse.json())
+					.then(data => rellenarTabla(data));
+			}
 		}
 
+		// Comentario: Función que se ejecuta al cargar la página
+		window.onload = function () {
+			// Comentario: Obtiene la lista de personas al cargar la página
+			var objeto = { servicio: "listar" };
+			var parametro = JSON.stringify(objeto);
+
+			// Comentario: Llama a la función para hacer la petición AJAX y rellenar la tabla
+			// pAJAX(url, metodo, rellenarTabla, parametro);
+			// Comentario: Conversión de pAJAX a función FETCH
+			fetch(url, { method: metodo, body: parametro })
+				.then(jsonResponse => jsonResponse.json()) // Comentario: No siempre es un .json lo que se trata, también podrá ser un .text
+				.then(data => rellenarTabla(data));
+
+			// Comentario: Asigna eventos a los botones
+			document.getElementById("btNuevaPersona").onclick = mostrarTablaCrear;
+			document.getElementById("btCancelar").onclick = ocultarTabla;
+			document.getElementById("btAnade").onclick = annadirElemento;
+		};
 	</script>
+
 </head>
 
 <body>
@@ -194,7 +219,7 @@
 				<input type="text" id="apellidos" size="40" value="García Gomariz" />
 			</div>
 			<div class="btn">
-				<button id="btAnade" data-id="-1">Añadir </button>
+				<button id="btAnade" data-id=-1>Añadir </button>
 				<button id="btCancelar">Cancelar </button>
 			</div>
 		</fieldset>

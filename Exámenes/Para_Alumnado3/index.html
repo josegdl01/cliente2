@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8"/>
+    <title>Examen 3. 1ª Evaluación. DWEC</title>
+		<style>
+			fieldset{
+				width: 400px;
+				margin-top: 2em;
+				margin-bottom: 1em;
+				margin-left: 1em;
+			}
+			fieldset label{
+				width: 4.5em;
+				display: inline-block;
+			}
+			
+			
+			/* CSS para el formulario:   */
+			.formDetalle{
+				visibility: hidden;  
+				position: absolute;
+				top: 20%;
+				left: 20%;
+				z-index:11;
+				background-color: pink;
+				border: 2px solid maroon;
+				border-radius: 15px;
+				padding: 1em;
+				color: red;
+			}
+
+			.formDetalle div label {
+				display: block;
+				margin-top: .5em;
+			}
+			
+			.formDetalle .btn {
+				display: block;
+				margin-top: 1em;
+			}
+			
+			
+			.ver {
+				visibility: visible;  
+			}
+			
+			
+		</style>
+		
+    <script type="text/javascript">
+		
+		
+			
+    </script>
+  </head>
+  
+  <body>
+  	
+    <h1>Examen 3. 1ª Evaluación. DWEC</h1>
+    <h3>Consulta de Facturas</h3>
+    <div>
+    	<p>
+		    <select id="factura">
+		    	<option value="-1">Selecciona una factura para consultar su detalle</option>
+		    </select>
+    	</p>
+    </div>
+    <div>
+    	Detalle de la factura:
+			
+			<br><br>
+			<button class="btn" id="btNuevoDetalle" type="button">Nuevo Detalle</button>
+			
+    	<p>
+		    <table id="detalle" border="1">
+		    	<thead>
+		    		<tr>
+		    			<th>ID</th>
+		    			<th>CANTIDAD</th>
+		    			<th>CONCEPTO</th>
+		    			<th>PRECIO</th>
+		    			<th>Tipo IVA</th>
+		    			<th>IVA</th>
+		    			<th>TOTAL</th>
+							<th>Modificar</th>
+							<th>Borrar</th>
+		    		</tr>
+		    	</thead>
+					
+		    	<tbody id="filas_tabla">
+
+						
+		    	</tbody>
+					
+					
+		    	<tfoot>
+		    		<tr>
+		    			<td colspan="5">TOTALES: </td>
+		    			<td id="Tiva">suma iva</td>
+		    			<td id="Ttotal">suma TOTAL</td>
+		    		</tr>
+		    	</tfoot>
+		    </table>
+    	</p>
+    </div>
+		
+		<div div id="formDetalle" class="formDetalle">
+			<fieldset>
+				<legend id="league">Añadir detalle</legend>
+				<p>
+					<label for="cantidad">Cantidad: </label>
+					<input type="text" id="cantidad" size="3" value="5" />
+				</p>
+				<p>
+					<label for="concepto">Concepto: </label>
+					<input type="text" id="concepto" size="44" value="Nuevo detalle" />
+				</p>
+				<p>
+					<label for="precio">precio: </label>
+					<input type="text" id="precio" size="4" value="25" /> €
+				</p>
+				
+				<p>
+					<label for="tipo_iva">Tipo IVA: </label>
+					<input type="text" id="tipo_iva" size="2" value="21" /> %
+				</p>
+			
+			</fieldset>
+			
+			<button id="btAnade" data-idld="-1">Añadir línea de detalle</button> 
+			
+			<button id="btCancelar" >Cancelar</button> 
+		
+		</div>
+    
+  </body>
+</html>

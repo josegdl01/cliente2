@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8" />
+	<title>Examen 3. 1ª Evaluación. DWEC</title>
+	<style>
+		fieldset {
+			width: 400px;
+			margin-top: 2em;
+			margin-bottom: 1em;
+			margin-left: 1em;
+		}
+
+		fieldset label {
+			width: 4.5em;
+			display: inline-block;
+		}
+
+
+		/* CSS para el formulario:   */
+		.formDetalle {
+			visibility: hidden;
+			position: absolute;
+			top: 20%;
+			left: 20%;
+			z-index: 11;
+			background-color: pink;
+			border: 2px solid maroon;
+			border-radius: 15px;
+			padding: 1em;
+			color: red;
+		}
+
+		.formDetalle div label {
+			display: block;
+			margin-top: .5em;
+		}
+
+		.formDetalle .btn {
+			display: block;
+			margin-top: 1em;
+		}
+
+
+		.ver {
+			visibility: visible;
+		}
+	</style>
+	<script type="text/javascript">
+		const url = "servidor.php";
+		const metodo = "POST";
+		var facturaActual = 0;
+		var ivaTotal = 0;
+		var totalTabla = 0;
+
+		//FUNCIÓN QUE RELLENA EL SELECT
+		function llenarSelect(op, jsonArray) {
+			op.options[0] = new Option("Selecciona una factura para consultar su detalle");
+			op.options[0].value = -1;
+			console.log(jsonArray);
+			console.log(op);
+			for (var i = 0; i < jsonArray.length; i++) {
+				op.options[op.options.length] = new Option("Factura: " + jsonArray[i].NUMERO + ". Fecha: " + jsonArray[i].FECHA, jsonArray[i].ID);
+			}
+		}
+
+		//FUNCIÓN QUE RELLENA EL SELECT
+		const pedirFactura = () => {
+			let param = {
+				servicio: "facturas"
+			};
+			let cabecero = {
+				method: metodo,
+				body: JSON.stringify(param)
+			};
+			fetch(url, cabecero).then(resp => resp.json()).then(facturas => llenarSelect(document.getElementById("factura"), facturas)).catch(err => console.error(err));
+		}
+
+		//Función independiente que devuelve una fila en base a un array
+		const crearFila = (array) => {
+			let fila = document.createElement("tr");
+			let casilla, contenido;
+			array.forEach(e => {
+				casilla = document.createElement("td");
+				if (e.value != null) {
+					if (e.innerHTML == "Del") {
+						e.addEventListener("click", borrarFila);
+					} else {
+						e.addEventListener("click", mostrarFormModificar);
+					}
+					casilla.appendChild(e);
+				} else {
+					contenido = document.createTextNode(e);
+					casilla.appendChild(contenido);
+				}
+
+				fila.appendChild(casilla);
+			});
+
+
+			return fila;
+		}
+
+		//LLENAR TABLA DEPARTAMENTOS
+		const rellenarTabla = (json) => {
+			ivaTotal = 0;
+			totalTabla = 0;
+			tabla = document.getElementById("filas_tabla");
+			tabla.innerHTML = "";
+			console.log(json);
+			let arrayBi = json.map(e => {
+				let iva = ((e.TIPO_IVA / 100) * e.PRECIO * e.CANTIDAD).toFixed(2);
+				let total = (parseFloat(iva) + e.PRECIO * e.CANTIDAD).toFixed(2);
+				let mod = document.createElement("button"); mod.appendChild(document.createTextNode("Mod"));
+				mod.dataset.id = e.ID; mod.dataset.cantidad = e.CANTIDAD; mod.dataset.concepto = e.CONCEPTO;
+				mod.dataset.precio = e.PRECIO; mod.dataset.tipoIva = e.TIPO_IVA;
+				let del = document.createElement("button"); del.appendChild(document.createTextNode("Del"));
+				del.dataset.id = e.ID; del.dataset.fact = e.ID_FACTURA;
+				ivaTotal += parseFloat(iva);
+				totalTabla += parseFloat(total);
+				console.log(ivaTotal, totalTabla);
+				return [e.ID, e.CANTIDAD, e.CONCEPTO, e.PRECIO, e.TIPO_IVA, iva, total, mod, del];
+			});
+			arrayBi.forEach(e => {
+				tabla.appendChild(crearFila(e));
+			});
+			document.getElementById("Tiva").innerHTML = ivaTotal.toFixed(2);
+			document.getElementById("Ttotal").innerHTML = totalTabla.toFixed(2);
+			console.log(facturaActual);
+		}
+
+		//FUNCIÓN QUE RELLENA LA TABLA
+		const pedirDetalles = (e) => {
+			facturaActual = e.currentTarget.value;
+			console.log(e.currentTarget);
+			let param = {
+				servicio: "detalle",
+				idFactura: facturaActual
+			};
+			let cabecero = {
+				method: metodo,
+				body: JSON.stringify(param)
+			};
+			fetch(url, cabecero).then(resp => resp.json()).then(facturas => rellenarTabla(facturas)).catch(err => console.error(err));;
+		}
+
+		//FUNCIÓN QUE AÑADE O MODIFICA UNA FILA
+		const anadeModDetalle = (e) => {
+			let inputs = document.getElementsByTagName("input");
+			let correcto = true;
+			for (let i = 0; i < inputs.length; i++) {
+				if (inputs[i].value == "") {
+					correcto = false;
+				}
+			}
+			if (correcto == true) {
+				if (e.currentTarget.dataset.idld == -1) {
+					let param = {
+						servicio: "anade",
+						idFactura: facturaActual,
+						cantidad: document.getElementById("cantidad").value,
+						concepto: document.getElementById("concepto").value,
+						precio: document.getElementById("precio").value,
+						tipo_iva: document.getElementById("tipo_iva").value
+
+					};
+					console.log(param);
+					let cabecero = {
+						method: metodo,
+						body: JSON.stringify(param)
+					};
+					console.log(cabecero);
+					fetch(url, cabecero).then(resp => resp.json()).then(facturas => rellenarTabla(facturas)).catch(err => console.error(err));
+					ocultarForm();
+				} else {
+					let param = {
+						servicio: "modificarDetalle",
+						idFactura: facturaActual,
+						cantidad: document.getElementById("cantidad").value,
+						concepto: document.getElementById("concepto").value,
+						precio: document.getElementById("precio").value,
+						tipo_iva: document.getElementById("tipo_iva").value,
+						id: e.currentTarget.dataset.idld
+
+					};
+					let cabecero = {
+						method: metodo,
+						body: JSON.stringify(param)
+					};
+					fetch(url, cabecero).then(resp => resp.json()).then(facturas => rellenarTabla(facturas)).catch(err => console.error(err));
+					document.getElementById("btAnade").dataset.idld = -1;
+					ocultarForm();
+				}
+			} else {
+				alert("Todos los campos son obligatorios");
+			}
+		}
+
+		//FUNCIÓN QUE MUESTRA FORMULARIO DE INSERCIÓN
+		const mostrarFormAñadir = () => {
+			if (document.getElementById("factura").value == -1) {
+				alert("Seleccione una factura");
+			} else {
+				document.getElementById("cantidad").value = "";
+				document.getElementById("concepto").value = "";
+				document.getElementById("precio").value = "";
+				document.getElementById("tipo_iva").value = "";
+				document.getElementById("btAnade").innerText = "Añadir Nueva línea de detalle";
+				document.getElementById("formDetalle").style.visibility = "visible";
+			}
+		}
+
+		//FUNCIÓN QUE MUESTRA FORMULARIO DE INSERCIÓN
+		const mostrarFormModificar = (e) => {
+			document.getElementById("cantidad").value = e.currentTarget.dataset.cantidad;
+			document.getElementById("concepto").value = e.currentTarget.dataset.concepto;
+			document.getElementById("precio").value = e.currentTarget.dataset.precio;
+			document.getElementById("tipo_iva").value = e.currentTarget.dataset.tipoIva;
+			document.getElementById("btAnade").innerText = "Modificar Línea";
+			document.getElementById("btAnade").dataset.idld = e.currentTarget.dataset.id;
+			document.getElementById("formDetalle").style.visibility = "visible";
+		}
+
+		//FUNCIÓN QUE OCULTA EL FORMULARIO
+		const ocultarForm = () => {
+			document.getElementById("formDetalle").style.visibility = "hidden";
+		}
+
+		//FUNCIÓN QUE BORRA UNA FILA
+		const borrarFila = (e) => {
+			if (confirm("¿Está seguro de querer borrar esta fila?")) {
+				let param = {
+					servicio: "borra",
+					id: e.currentTarget.dataset.id,
+					idFactura: e.currentTarget.dataset.fact
+				};
+				let cabecero = {
+					method: metodo,
+					body: JSON.stringify(param)
+				};
+				console.log(param, cabecero);
+				fetch(url, cabecero).then(resp => resp.json()).then(facturas => rellenarTabla(facturas)).catch(err => console.error(err));;
+			}
+		}
+
+		function limitaDecimales(e) {
+			for (var i = 0; i < this.value.length; i++) {
+				if (this.value.indexOf(".") != -1 && e.charCode == 46) {
+					return false;
+				}
+			}
+			if (!((e.charCode >= 48 && e.charCode <= 57) || e.charCode == 46 || e.charCode == 45)) {
+				return false;
+			}
+		}
+
+		window.onload = function () {
+			pedirFactura();
+
+			document.getElementById("factura").addEventListener("change", pedirDetalles);
+			document.getElementById("btNuevoDetalle").addEventListener("click", mostrarFormAñadir);
+			document.getElementById("btCancelar").addEventListener("click", ocultarForm);
+			document.getElementById("btAnade").addEventListener("click", anadeModDetalle);
+
+			document.getElementById("cantidad").onkeypress = limitaDecimales;
+			document.getElementById("precio").onkeypress = limitaDecimales;
+			document.getElementById("tipo_iva").onkeypress = limitaDecimales;
+		}
+
+
+	</script>
+</head>
+
+<body>
+
+	<h1>Examen 3. 1ª Evaluación. DWEC</h1>
+	<h3>Consulta de Facturas</h3>
+	<div>
+		<p>
+			<select id="factura">
+				<option value="-1">Selecciona una factura para consultar su detalle</option>
+			</select>
+		</p>
+	</div>
+	<div>
+		Detalle de la factura:
+
+		<br><br>
+		<button class="btn" id="btNuevoDetalle" type="button">Nuevo Detalle</button>
+
+		<p>
+		<table id="detalle" border="1">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>CANTIDAD</th>
+					<th>CONCEPTO</th>
+					<th>PRECIO</th>
+					<th>Tipo IVA</th>
+					<th>IVA</th>
+					<th>TOTAL</th>
+					<th>Modificar</th>
+					<th>Borrar</th>
+				</tr>
+			</thead>
+
+			<tbody id="filas_tabla">
+
+
+			</tbody>
+
+
+			<tfoot>
+				<tr>
+					<td colspan="5">TOTALES: </td>
+					<td id="Tiva">suma iva</td>
+					<td id="Ttotal">suma TOTAL</td>
+				</tr>
+			</tfoot>
+		</table>
+		</p>
+	</div>
+
+	<div div id="formDetalle" class="formDetalle">
+		<fieldset>
+			<legend id="league">Añadir detalle</legend>
+			<p>
+				<label for="cantidad">Cantidad: </label>
+				<input type="text" id="cantidad" size="3" value="5" />
+			</p>
+			<p>
+				<label for="concepto">Concepto: </label>
+				<input type="text" id="concepto" size="44" value="Nuevo detalle" />
+			</p>
+			<p>
+				<label for="precio">precio: </label>
+				<input type="text" id="precio" size="4" value="25" /> €
+			</p>
+
+			<p>
+				<label for="tipo_iva">Tipo IVA: </label>
+				<input type="text" id="tipo_iva" size="2" value="21" /> %
+			</p>
+
+		</fieldset>
+
+		<button id="btAnade" data-idld="-1">Añadir línea de detalle</button>
+
+		<button id="btCancelar">Cancelar</button>
+
+	</div>
+
+</body>
+
+</html>
