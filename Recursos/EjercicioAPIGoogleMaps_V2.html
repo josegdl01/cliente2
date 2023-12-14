@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EjercicioMaps_V2</title>
+    <style type="text/css">
+        #divMapa {
+            width: 60rem;
+            height: 40rem;
+            border: 0.1rem solid red;
+        }
+    </style>
+    <script type="text/javascript" src="http://maps.google.com/maps/api/js?key=AIzaSyA-8z-dBcm4UOkXMzoi8Ast_7qFmMrbgwc">
+    </script>
+
+    <script type="text/javascript">
+
+        function CargarMapa() {
+            var divMapa = document.getElementById("divMapa");
+
+            var posicion = { lat: 42.1995269, lng: -3.7001126 }
+            var opciones = {
+                center: new google.maps.LatLng(posicion.lat, posicion.lng),
+                zoom: 15
+            };
+
+            var mapa = new google.maps.Map(divMapa, opciones);
+            var marcador = new google.maps.Marker({
+                position: posicion,
+                map: mapa,
+                title: "El mejor pueblo de ESPAÑA",
+                /*De esta manera creamos una animacion al puntero*/
+                animation: google.maps.Animation.BOUNCE
+            });
+
+            var ventanaInformativa = new google.maps.InfoWindow({
+                position: { lat: 42.19933, lng: -3.705654 },
+                map: mapa,
+                content: "El rio de los dineros"
+            });
+
+            ventanaInformativa = new google.maps.InfoWindow({
+                position: { lat: 42.20155593975667, lng: -3.6976025222971165 },
+                map: mapa,
+                content: "Punto de entrega y recogida"
+            });
+
+
+            var imagenZona = '<img src="imagenZona.jpg">'
+            ventanaInformativa = new google.maps.InfoWindow({
+                position: { lat: 42.204593766567434, lng: -3.7035617012690896 },
+                map: mapa,
+                content: imagenZona + "<br>Zona de testeo",
+            });
+        }
+
+        window.onload = () => {
+            document.getElementById("btCargarMapa").addEventListener("click", CargarMapa);
+        }
+    </script>
+</head>
+
+<body>
+    <h3>Ejercicio de Google Maps versión 2</h3>
+    <h4>En este ejercicio el puntero da saltitos y se pondrán ventanas informativas</h4>
+    <button id="btCargarMapa">Cargar Mapa</button>
+    <div id="divMapa">
+        Aqui va el material
+    </div>
+</body>
+
+</html>
