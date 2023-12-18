@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <script type="text/javascript">
+
+        const leerFichero = (e) => {
+            console.log("e: " , e);
+            console.log("e.target.files: " , e.target.files);
+            var fichero = e.target.files[0];
+
+            var lector = new FileReader();
+
+            lector.onload = (e) =>{
+                tratarFichero(lector.result);
+            }
+
+            lector.readAsText(fichero);
+        }
+
+        const tratarFichero = (contenido) => {
+            console.log("contenido :", contenido);
+        }
+
+        window.onload = function(){
+            document.getElementById("idFichero").addEventListener("change", leerFichero);
+        }
+    </script>
+</head>
+<body>
+    <p>
+        <label for="idFichero">Selecciona el fichero a leer: </label><br>
+        <input id="idFichero" type="file">
+    </p>
+    <p>
+        <div id="sal">
+            Aquí pongo la salida del fichero
+        </div>
+    </p>
+</body>
+</html>
