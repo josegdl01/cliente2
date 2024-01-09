@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejercicio sobre gráficos de rutas</title>
+
+    <link href="c3-0.7.20\docs\css\c3.css" rel="stylesheet">
+    </link>
+
+    <script src="c3-0.7.20\docs\js\d3-5.8.2.min.js" charset="utf-8"></script>
+    <script src="c3-0.7.20\c3.min.js"></script>
+
+    <style>
+        #pakigrafik {
+            margin-top: 10px;
+            width: 90%;
+            height: 400px;
+            border: 2px blueviolet solid;
+        }
+    </style>
+
+    <script type="text/javascript">
+        const leerFichero = (e) => {
+            console.log("e: ", e);
+            console.log("e.target.files: ", e.target.files);
+            var fichero = e.target.files[0];
+
+            var lector = new FileReader();
+
+            lector.onload = (e) => {
+                tratarFichero(toXML(lector.result));
+            }
+
+            lector.readAsText(fichero);
+        } //leerFichero
+
+        const toXML = (e) => {
+            var xml = new DOMParser().parseFromString(e, "text/xml");
+            return xml;
+        }
+
+        const tratarFichero = (contenido) => {
+            var sal = document.getElementById("sal");
+            var puntos = contenido.getElementsByTagName("trkpt");
+            console.log("puntos: ", puntos);
+            var awray = new Array();
+            alert("Número de puntos: " + puntos.length);
+            var elevacion;
+            for (let i = 0; i < puntos.length; i++) {
+                elevacion = parseFloat(puntos[i].getElementsByTagName("ele").item(0).firstChild.data);
+                awray.push(elevacion);
+            }
+            console.log(awray);
+            pintaGrafik(awray);
+        }//tratarFichero
+
+        const pintaGrafik = (e) => {
+            var chart = c3.generate({
+                bindto: '#pakigrafik',
+                data: {
+                    columns: [
+                        e
+                    ]
+                }
+            });
+        }//pintaGrafik
+
+        window.onload = () => {
+            document.getElementById("idFichero").addEventListener("change", leerFichero);
+        } //window.onload
+    </script>
+
+</head>
+
+<body>
+    <h2>Gráfico de altitud en base a un fichero de puntos</h2>
+
+    <p>
+        <label for="idFichero">Selecciona el fichero a leer: </label><br>
+        <input id="idFichero" type="file">
+    </p>
+
+    <div id="pakigrafik"></div>
+</body>
+
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejemplo sobre gráficos</title>
+
+    <link href="c3-0.7.20\docs\css\c3.css" rel="stylesheet">
+    </link>
+
+    <script src="c3-0.7.20\docs\js\d3-5.8.2.min.js" charset="utf-8"></script>
+    <script src="c3-0.7.20\c3.min.js"></script>
+
+    <style>
+        #pakigrafik {
+            margin-top: 10px;
+            width: 90%;
+            height: 400px;
+            border-radius: 2px;
+        }
+    </style>
+
+    <script type="text/javascript">
+
+        
+
+        const pintaGrafik = () => {
+            var chart = c3.generate({
+                bindto: '#pakigrafik',
+                data: {
+                    columns: [
+                        ['data1', 30, 200, 100, 400, 150, 250],
+                        ['data2', 50, 20, 10, 40, 15, 25]
+                    ]
+                }
+            });
+        }//pintaGrafik
+        
+        window.onload = () => {
+            pintaGrafik();
+        }
+    </script>
+</head>
+
+<body>
+    <div id="pakigrafik"></div>
+</body>
+
+</html>
