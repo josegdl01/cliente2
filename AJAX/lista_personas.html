@@ -42,7 +42,7 @@
 			opacity: 1;
 		}
 	</style>
-	<script type="text/javascript" src="util2AJAX.js"></script>
+	<script type="text/javascript" src="Utilidades.js"></script>
 	<script type="text/javascript">
 		var datos;
 		var url = "servidor.php";
@@ -193,11 +193,24 @@
 			pAjax(url, metodo, rellenarTabla, param);
 		}
 
+		function leerImagen() {
+			var fichero = this.files[0];
+			ficheroImagen = this.files[0];
+			console.log("fichero", fichero);
+			var reader = new FileReader();
+			reader.onloadend = () => {
+				console.log("contenido", reader.result);
+				document.getElementById("imagen").src = reader.result;
+			}
+			reader.readAsDataURL(fichero);
+		}
+
 		window.onload = function () {
 			leerDatos();
 			document.getElementById("btNuevaPersona").onclick = mostrarFormLeer;
 			document.getElementById("btAnade").onclick = addPersona;
 			document.getElementById("btCancelar").onclick = ocultarFormulario;
+			document.getElementById("fImagen").addEventListener("change", leerImagen);
 
 
 		}
@@ -221,6 +234,21 @@
 			<div>
 				<label for="apellidos">Apellidos</label>
 				<input type="text" id="apellidos" size="40" value="García Gomariz" />
+			</div>
+			<div>
+				<label for="fecha">Fecha de nacimiento</label>
+				<input type="date" id="fecha" />
+			</div>
+			<div>
+				<label for="estatura">Estatura</label>
+				<input type="text" id="estatura" size="40" value="1.78" />
+			</div>
+			<div>
+				<label for="fImagen">Imagen</label>
+				<input type="file" id="fImagen" />
+			</div>
+			<div>
+				<img id="imagen" src="">
 			</div>
 			<div class="btn">
 				<button id="btAnade">Añadir </button>

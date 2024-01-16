@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8" />
+	<title>Ejercicio Listado Personas. AJAX</title>
+	<style type="text/css">
+		h3 {
+			color: red;
+		}
+
+		/* CSS para el formulario:   */
+		.formPersonas {
+			visibility: hidden;
+			position: absolute;
+			top: 20%;
+			left: 20%;
+			z-index: 11;
+			background-color: pink;
+			border: 2px solid maroon;
+			border-radius: 15px;
+			padding: 1em;
+			color: red;
+
+			/*opacity:0;   
+			transition: all 1s;*/
+		}
+
+		.formPersonas div label {
+			display: block;
+			margin-top: .5em;
+		}
+
+		.formPersonas .btn {
+			display: block;
+			margin-top: 1em;
+		}
+
+
+		.ver {
+			visibility: visible;
+			opacity: 1;
+		}
+	</style>
+	<!-- <script type="text/javascript" src="Utilidades.js"></script> -->
+	<script type="text/javascript">
+		var datos;
+		var url = "servidor.php";
+		var metodo = "post";;
+		var objeto;
+		var param;
+		var edit;
+		var delet;
+		var bandera;
+
+		// function rellenarTabla(json) {
+		// 	//Vacío la tabla antes de rellenarla siempre
+		// 	document.getElementById("filas_tabla").innerHTML = "";
+		// 	console.log(json);
+		// 	//Mapeamos el JSON y añadimos botones.
+		// 	datos = json.map(function (e) {
+		// 		edit = document.createElement("button");
+		// 		//Creamos un dataset dentro del boton que nos permita añadir atributos para acceder a ellos después
+		// 		edit.dataset.id = e.ID;
+		// 		edit.dataset.nombre = e.NOMBRE;
+		// 		edit.dataset.apellidos = e.APELLIDOS;
+		// 		edit.dataset.dni = e.DNI;
+		// 		delet = document.createElement("button");
+		// 		delet.dataset.id = e.ID;
+		// 		edit.appendChild(document.createTextNode("Edit")); edit.value = "edit";
+		// 		delet.appendChild(document.createTextNode("Delete")); delet.value = "delet";
+		// 		return new Array(e.ID, e.DNI, e.NOMBRE, e.APELLIDOS, delet, edit);
+		// 	});
+		// 	console.log(datos);
+		// 	function insertarFila(arrayFila) {
+		// 		var fila = document.createElement("tr");
+		// 		var casilla; var contenido;
+		// 		arrayFila.forEach(function (e) {
+		// 			casilla = document.createElement("td");
+		// 			//Si el atributo value no es nulo, es que es un botón
+		// 			if (e.value != null) {
+		// 				casilla.appendChild(e);
+		// 				//Caso de que sea el botón de borrar
+		// 				if (e.value == "delet") {
+		// 					e.onclick = borrarFila;
+		// 					//Caso de que sea el botón de editar
+		// 				} else {
+		// 					e.onclick = mostrarFormMod;
+		// 				}
+		// 				//Caso de que sean el resto de atributos
+		// 			} else {
+		// 				contenido = document.createTextNode(e);
+		// 				casilla.appendChild(contenido);
+		// 			}
+		// 			fila.appendChild(casilla);
+		// 		});
+		// 		return fila;
+		// 	}
+		// 	var fila;
+		// 	var tabla = document.getElementById("filas_tabla")
+		// 	//Añadimos la fila con todos los elementos
+		// 	datos.forEach(function (e) {
+		// 		fila = insertarFila(e);
+		// 		tabla.appendChild(fila);
+		// 	});
+		// }
+
+		// //Función que cambia el formulario en base de si es para modificar o insertar
+		// function cambiarFormulario() {
+		// 	if (bandera) {
+		// 		document.getElementsByTagName("legend")[0].innerHTML = "Modificar Usuario";
+		// 		document.getElementById("btAnade").innerHTML = "Modificar";
+		// 	} else {
+		// 		document.getElementsByTagName("legend")[0].innerHTML = "Alta en el servicio";
+		// 		document.getElementById("btAnade").innerHTML = "Añadir";
+		// 	}
+		// }
+
+		// //Función que oculta formulario
+		// function ocultarFormulario() {
+		// 	document.getElementById("formPersonas").style.visibility = "hidden";
+		// }
+
+		// //Función para mostrar el formulario de inserción
+		// function mostrarFormLeer() {
+		// 	bandera = false;
+		// 	cambiarFormulario();
+		// 	document.getElementById("formPersonas").style.visibility = "visible";
+		// }
+
+		// //Función para mostrar el formulario de modificación
+		// function mostrarFormMod() {
+		// 	document.getElementById("dni").value = this.dataset.dni;
+		// 	document.getElementById("nombre").value = this.dataset.nombre;
+		// 	document.getElementById("apellidos").value = this.dataset.apellidos;
+		// 	bandera = true;
+		// 	cambiarFormulario();
+		// 	document.getElementById("formPersonas").style.visibility = "visible";
+		// }
+
+		// //Función para borrar fila
+		// function borrarFila() {
+		// 	console.log(this.dataset.id);
+		// 	objeto = {
+		// 		servicio: "borrar",
+		// 		id: this.dataset.id
+		// 	};
+		// 	param = JSON.stringify(objeto);
+		// 	console.log("borrar: " + param);
+		// 	url = "servidor.php";
+		// 	metodo = "post";
+		// 	if (confirm("¿Está seguro de querer borrar esta fila?")) {
+		// 		pAjax(url, metodo, rellenarTabla, param);
+		// 	}
+		// }
+
+		// //Función para modificar fila
+		// function modificarPersona() {
+		// 	objeto = {
+		// 		servicio: "modificar",
+		// 		dni: dni,
+		// 		nombre: nombre,
+		// 		apellidos: apellidos,
+		// 		id: id
+		// 	};
+		// 	param = JSON.stringify(objeto);
+		// 	url = "servidor.php";
+		// 	metodo = "post";
+		// 	console.log("modificar: " + param);
+		// 	pAjax(url, metodo, rellenarTabla, param);
+		// }
+
+		// //Función para añadir fila
+		// function addPersona() {
+		// 	objeto = {
+		// 		servicio: "insertar",
+		// 		dni: document.getElementById("dni").value,
+		// 		nombre: document.getElementById("nombre").value,
+		// 		apellidos: document.getElementById("apellidos").value
+		// 	};
+		// 	param = JSON.stringify(objeto);
+
+		// 	console.log("insertar: " + param);
+		// 	pAjax(url, metodo, rellenarTabla, param);
+		// 	ocultarFormulario();
+		// }
+
+		// //Función para leer datos
+		// function leerDatos() {
+		// 	var objeto = { servicio: "listar" };
+		// 	param = JSON.stringify(objeto);
+		// 	console.log("leer: " + param);
+		// 	pAjax(url, metodo, rellenarTabla, param);
+		// }
+
+
+		//ESTABLECIMIENTO DE LA CONEXIÓN
+		var conexionBD = new JsStore.Connection(new Worker('jsstore.worker.min.js'));
+
+
+		async function crearBD() {
+			var nombreDB = "listaPersonas";
+			var tablaPersonas = {
+				name : "Persona",
+				columns : {
+					id : {primaryKey: true, autoIncrement: true},
+					dni : {notNull: true, dataType: "string"},
+					nombre : {notNull: true, dataType: "string"},
+					apellidos : {notNull: true, dataType: "string"},
+					fechaNacimiento : {notNull: true, dataType: "date_time"},
+					estatura : {notNull: true, dataType: "number"},
+					imagenBlob : {notNull: false, dataType: "string"},
+					imagen64: {notNull: false, dataType: "string"}
+				}
+			}
+
+			var db = {
+				name : nombreDB,
+				tables : [tablaPersonas]
+			}
+
+			const dbCreadaCorrectamente = await connection.initDb(db);
+
+			if(dbCreadaCorrectamente){
+				console.log("Base de Datos creada correctamente");
+				var value = {
+					dni:'29498314D',
+					nombre:'José',
+					apellidos:'García De Lemus',
+					fechaNacimiento: new Date(2001, 1, 10),
+					estatura:1.79,
+					imagenBlob: null,
+					imagen64:"picture"
+				}
+
+				var insertCount = await connection.insert({
+					into: 'Persona',
+					values:[value]
+				});
+
+				console.log(`${insertCount} filas insertadas`);
+			} else {
+				console.log("Base de datos abierta, 0 datos insertados");
+			}
+			cargaDatos();
+		}
+
+		function leerImagen() {
+			var fichero = this.files[0];
+			ficheroImagen = this.files[0];
+			console.log("fichero", fichero);
+			var reader = new FileReader();
+			reader.onloadend = () => {
+				console.log("contenido", reader.result);
+				document.getElementById("imagen").src = reader.result;
+			}
+			reader.readAsDataURL(fichero);
+		}
+
+		window.onload = function () {
+			// leerDatos();
+			// document.getElementById("btNuevaPersona").onclick = mostrarFormLeer;
+			// document.getElementById("btAnade").onclick = addPersona;
+			// document.getElementById("btCancelar").onclick = ocultarFormulario;
+			iniciarBBDD();
+			document.getElementById("fImagen").addEventListener("change", leerImagen);
+
+
+		}
+	</script>
+</head>
+
+<body>
+	<h3>Registro de Usuarios</h3>
+
+	<div id="formPersonas" class="formPersonas">
+		<fieldset>
+			<legend>Alta en el servicio</legend>
+			<div>
+				<label for="dni">DNI</label>
+				<input type="text" id="dni" size="10" maxlength="9" value="27473339T" />
+			</div>
+			<div>
+				<label for="nombre">Nombre</label>
+				<input type="text" id="nombre" value="Marco Elio" />
+			</div>
+			<div>
+				<label for="apellidos">Apellidos</label>
+				<input type="text" id="apellidos" size="40" value="García Gomariz" />
+			</div>
+			<div>
+				<label for="fecha">Fecha de nacimiento</label>
+				<input type="date" id="fecha" />
+			</div>
+			<div>
+				<label for="estatura">Estatura</label>
+				<input type="text" id="estatura" size="40" value="1.78" />
+			</div>
+			<div>
+				<label for="fImagen">Imagen</label>
+				<input type="file" id="fImagen" />
+			</div>
+			<div>
+				<img id="imagen" src="">
+			</div>
+			<div class="btn">
+				<button id="btAnade">Añadir </button>
+				<button id="btCancelar">Cancelar </button>
+			</div>
+		</fieldset>
+	</div>
+
+
+
+	<br />
+	<button class="btn" id="btNuevaPersona">Nueva persona</button>
+	<br><br>
+	<table id="tabla_personas" border="1">
+		<tr>
+			<th>ID</th>
+			<th>DNI</th>
+			<th>NOMBRE</th>
+			<th>APELLIDOS</th>
+			<th>FECHA DE NACIMIENTO</th>
+			<th>ESTATURA</th>
+			<th>Borrar</th>
+			<th>Editar</th>
+		</tr>
+
+		<tbody id="filas_tabla">
+
+		</tbody>
+	</table>
+
+	<br><br>
+
+</body>
+
+</html>
