@@ -43,206 +43,205 @@
 		}
 	</style>
 	<!-- <script type="text/javascript" src="Utilidades.js"></script> -->
+	<script src="jsstore.min.js"></script>
+	<script src="jsstore.worker.min.js"></script>
 	<script type="text/javascript">
-		var datos;
-		var url = "servidor.php";
-		var metodo = "post";;
-		var objeto;
-		var param;
-		var edit;
-		var delet;
-		var bandera;
-
-		// function rellenarTabla(json) {
-		// 	//Vacío la tabla antes de rellenarla siempre
-		// 	document.getElementById("filas_tabla").innerHTML = "";
-		// 	console.log(json);
-		// 	//Mapeamos el JSON y añadimos botones.
-		// 	datos = json.map(function (e) {
-		// 		edit = document.createElement("button");
-		// 		//Creamos un dataset dentro del boton que nos permita añadir atributos para acceder a ellos después
-		// 		edit.dataset.id = e.ID;
-		// 		edit.dataset.nombre = e.NOMBRE;
-		// 		edit.dataset.apellidos = e.APELLIDOS;
-		// 		edit.dataset.dni = e.DNI;
-		// 		delet = document.createElement("button");
-		// 		delet.dataset.id = e.ID;
-		// 		edit.appendChild(document.createTextNode("Edit")); edit.value = "edit";
-		// 		delet.appendChild(document.createTextNode("Delete")); delet.value = "delet";
-		// 		return new Array(e.ID, e.DNI, e.NOMBRE, e.APELLIDOS, delet, edit);
-		// 	});
-		// 	console.log(datos);
-		// 	function insertarFila(arrayFila) {
-		// 		var fila = document.createElement("tr");
-		// 		var casilla; var contenido;
-		// 		arrayFila.forEach(function (e) {
-		// 			casilla = document.createElement("td");
-		// 			//Si el atributo value no es nulo, es que es un botón
-		// 			if (e.value != null) {
-		// 				casilla.appendChild(e);
-		// 				//Caso de que sea el botón de borrar
-		// 				if (e.value == "delet") {
-		// 					e.onclick = borrarFila;
-		// 					//Caso de que sea el botón de editar
-		// 				} else {
-		// 					e.onclick = mostrarFormMod;
-		// 				}
-		// 				//Caso de que sean el resto de atributos
-		// 			} else {
-		// 				contenido = document.createTextNode(e);
-		// 				casilla.appendChild(contenido);
-		// 			}
-		// 			fila.appendChild(casilla);
-		// 		});
-		// 		return fila;
-		// 	}
-		// 	var fila;
-		// 	var tabla = document.getElementById("filas_tabla")
-		// 	//Añadimos la fila con todos los elementos
-		// 	datos.forEach(function (e) {
-		// 		fila = insertarFila(e);
-		// 		tabla.appendChild(fila);
-		// 	});
-		// }
-
-		// //Función que cambia el formulario en base de si es para modificar o insertar
-		// function cambiarFormulario() {
-		// 	if (bandera) {
-		// 		document.getElementsByTagName("legend")[0].innerHTML = "Modificar Usuario";
-		// 		document.getElementById("btAnade").innerHTML = "Modificar";
-		// 	} else {
-		// 		document.getElementsByTagName("legend")[0].innerHTML = "Alta en el servicio";
-		// 		document.getElementById("btAnade").innerHTML = "Añadir";
-		// 	}
-		// }
-
-		// //Función que oculta formulario
-		// function ocultarFormulario() {
-		// 	document.getElementById("formPersonas").style.visibility = "hidden";
-		// }
-
-		// //Función para mostrar el formulario de inserción
-		// function mostrarFormLeer() {
-		// 	bandera = false;
-		// 	cambiarFormulario();
-		// 	document.getElementById("formPersonas").style.visibility = "visible";
-		// }
-
-		// //Función para mostrar el formulario de modificación
-		// function mostrarFormMod() {
-		// 	document.getElementById("dni").value = this.dataset.dni;
-		// 	document.getElementById("nombre").value = this.dataset.nombre;
-		// 	document.getElementById("apellidos").value = this.dataset.apellidos;
-		// 	bandera = true;
-		// 	cambiarFormulario();
-		// 	document.getElementById("formPersonas").style.visibility = "visible";
-		// }
-
-		// //Función para borrar fila
-		// function borrarFila() {
-		// 	console.log(this.dataset.id);
-		// 	objeto = {
-		// 		servicio: "borrar",
-		// 		id: this.dataset.id
-		// 	};
-		// 	param = JSON.stringify(objeto);
-		// 	console.log("borrar: " + param);
-		// 	url = "servidor.php";
-		// 	metodo = "post";
-		// 	if (confirm("¿Está seguro de querer borrar esta fila?")) {
-		// 		pAjax(url, metodo, rellenarTabla, param);
-		// 	}
-		// }
-
-		// //Función para modificar fila
-		// function modificarPersona() {
-		// 	objeto = {
-		// 		servicio: "modificar",
-		// 		dni: dni,
-		// 		nombre: nombre,
-		// 		apellidos: apellidos,
-		// 		id: id
-		// 	};
-		// 	param = JSON.stringify(objeto);
-		// 	url = "servidor.php";
-		// 	metodo = "post";
-		// 	console.log("modificar: " + param);
-		// 	pAjax(url, metodo, rellenarTabla, param);
-		// }
-
-		// //Función para añadir fila
-		// function addPersona() {
-		// 	objeto = {
-		// 		servicio: "insertar",
-		// 		dni: document.getElementById("dni").value,
-		// 		nombre: document.getElementById("nombre").value,
-		// 		apellidos: document.getElementById("apellidos").value
-		// 	};
-		// 	param = JSON.stringify(objeto);
-
-		// 	console.log("insertar: " + param);
-		// 	pAjax(url, metodo, rellenarTabla, param);
-		// 	ocultarFormulario();
-		// }
-
-		// //Función para leer datos
-		// function leerDatos() {
-		// 	var objeto = { servicio: "listar" };
-		// 	param = JSON.stringify(objeto);
-		// 	console.log("leer: " + param);
-		// 	pAjax(url, metodo, rellenarTabla, param);
-		// }
-
 
 		//ESTABLECIMIENTO DE LA CONEXIÓN
 		var conexionBD = new JsStore.Connection(new Worker('jsstore.worker.min.js'));
 
 
 		async function crearBD() {
+			//Inicialización de los parámetros de la base de datos, primero nombre y después tabla/s
 			var nombreDB = "listaPersonas";
 			var tablaPersonas = {
-				name : "Persona",
-				columns : {
-					id : {primaryKey: true, autoIncrement: true},
-					dni : {notNull: true, dataType: "string"},
-					nombre : {notNull: true, dataType: "string"},
-					apellidos : {notNull: true, dataType: "string"},
-					fechaNacimiento : {notNull: true, dataType: "date_time"},
-					estatura : {notNull: true, dataType: "number"},
-					imagenBlob : {notNull: false, dataType: "string"},
-					imagen64: {notNull: false, dataType: "string"}
+				name: "Persona",
+				columns: {
+					id: { primaryKey: true, autoIncrement: true },
+					dni: { notNull: true, dataType: "string" },
+					nombre: { notNull: true, dataType: "string" },
+					apellidos: { notNull: true, dataType: "string" },
+					fechaNacimiento: { notNull: true, dataType: "date_time" },
+					estatura: { dataType: "number" },
+					imagenBlob: { notNull: false, dataType: "object" },
+					imagen64: { notNull: false, dataType: "string" }
 				}
 			}
 
+			//Creamos el objeto base de datos
 			var db = {
-				name : nombreDB,
-				tables : [tablaPersonas]
+				name: nombreDB,
+				tables: [tablaPersonas]
 			}
 
-			const dbCreadaCorrectamente = await connection.initDb(db);
+			//Creación de la base de datos usando un método de la API JsStore, recibe el objeto recién creado
+			const dbCreadaCorrectamente = await conexionBD.initDb(db);
 
-			if(dbCreadaCorrectamente){
+			//Este condicional solo pasa por el primer caso una vez, una vez creada la BBDD, el booleano SIEMPRE es false
+			if (dbCreadaCorrectamente) {
 				console.log("Base de Datos creada correctamente");
 				var value = {
-					dni:'29498314D',
-					nombre:'José',
-					apellidos:'García De Lemus',
+					dni: '29498314D',
+					nombre: 'José',
+					apellidos: 'García De Lemus',
 					fechaNacimiento: new Date(2001, 1, 10),
-					estatura:1.79,
+					estatura: 1.79,
 					imagenBlob: null,
-					imagen64:"picture"
+					imagen64: "picture"
 				}
 
-				var insertCount = await connection.insert({
+				//INSERT
+				var insertCount = await conexionBD.insert({
 					into: 'Persona',
-					values:[value]
+					values: [value]
 				});
-
 				console.log(`${insertCount} filas insertadas`);
 			} else {
 				console.log("Base de datos abierta, 0 datos insertados");
 			}
-			cargaDatos();
+			rellenarTabla();
+		}//crearDB
+
+		async function rellenarTabla() {
+			var tabla = document.getElementById("filas_tabla");
+			tabla.innerHTML = "";
+
+			//SELECT
+			var personas = await conexionBD.select({
+				from: "Persona"
+			});
+
+			console.log(personas);
+
+			personas = personas.map(element => {
+				return [
+					element.id,
+					element.dni,
+					element.nombre,
+					element.apellidos,
+					element.fechaNacimiento,
+					element.estatura,
+					element.imagenBlob,
+					element.imagen64
+				]
+			});
+
+			console.log(personas);
+
+			function insertarFila(arrayFila) {
+				let fila = document.createElement("tr");
+				let casilla; let contenido;
+				arrayFila.forEach(function (e) {
+					casilla = document.createElement("td");
+					contenido = document.createTextNode(e);
+					casilla.appendChild(contenido);
+					fila.appendChild(casilla);
+				});
+				return fila;
+			}
+
+			personas.forEach(persona => {
+				let fila = insertarFila(persona);
+
+				let borrarBut = document.createElement("button");
+				borrarBut.appendChild(document.createTextNode("Borrar"));
+				borrarBut.dataset.id = persona[0];
+				borrarBut.dataset.nombre = persona[2] + " " + persona[3];
+				let editarBut = document.createElement("button");
+				editarBut.appendChild(document.createTextNode("Editar"));
+				editarBut.dataset.id = persona[0];
+				let casilla1 = document.createElement("td");
+				casilla1.appendChild(borrarBut);
+				let casilla2 = document.createElement("td");
+				casilla2.appendChild(editarBut);
+
+				fila.appendChild(casilla1);
+				fila.appendChild(casilla2);
+
+				borrarBut.addEventListener("click", deletePersona);
+				editarBut.addEventListener("click", mostrarFormEditar);
+
+				tabla.appendChild(fila);
+			});
+		}//rellenarTabla
+
+
+
+		//FUNCIÓN PARA BORRAR PERSONAS
+		async function deletePersona() {
+			if (confirm("¿Desea borrar a la persona " + this.dataset.nombre + "?")) {
+				var rowsDeleted = await conexionBD.remove({
+					from: "Persona",
+					where: {
+						id: parseInt(this.dataset.id)
+					}
+				});
+			}
+			alert(rowsDeleted + " filas borradas.");
+
+			rellenarTabla();
+		}
+
+
+		//Función para añadir o actualizar una persona
+		async function updatePersona() {
+			console.log(document.getElementById("fecha").value);
+
+			if(document.getElementById("fecha").value == ""){
+				alert("Se debe seleccionar una fecha válida");
+				return false;
+			}
+
+			let dni = document.getElementById("dni").value;
+			let nombre = document.getElementById("nombre").value;
+			let apellidos = document.getElementById("apellidos").value;
+			let fechaNac = new Date(document.getElementById("fecha").value);
+			let estatura = parseFloat(document.getElementById("estatura").value);
+			let imagenBlob = null;
+			let imagen64 = document.getElementById("imagen").src;
+
+			if (this.dataset.id == -1) {
+				var value = {
+					dni: dni,
+					nombre: nombre,
+					apellidos: apellidos,
+					fechaNacimiento: fechaNac,
+					estatura: estatura,
+					imagenBlob: imagenBlob,
+					imagen64: imagen64
+				};
+
+				var filasInsertadas = await conexionBD.insert({
+					into: "Persona",
+					values: [value]
+				});
+
+				console.log(`${filasInsertadas} filas insertadas`);
+
+				ocultarFormulario();
+				rellenarTabla();
+			} else {
+				var filasActualizadas = await conexionBD.update({
+					in: "Persona",
+					set: {
+						dni: dni,
+						nombre: nombre,
+						apellidos: apellidos,
+						fechaNacimiento: fechaNac,
+						estatura: estatura,
+						imagenBlob: imagenBlob,
+						imagen64: imagen64
+					},
+					where: {
+						id: parseInt(this.dataset.id)
+					}
+				});
+
+				console.log(`${filasActualizadas} filas actualizadas`);
+
+				ocultarFormulario();
+				rellenarTabla();
+			}
 		}
 
 		function leerImagen() {
@@ -257,12 +256,46 @@
 			reader.readAsDataURL(fichero);
 		}
 
+		//Función que muestra el formulario de inserción con los valores de la persona seleccionada
+		async function mostrarFormEditar() {
+
+			let persona = await conexionBD.select({
+				from: "Persona",
+				where: {
+					id:parseInt(this.dataset.id)
+				}
+			});
+
+			console.log(new Date(persona[0].fechaNacimiento));
+			let fecha = new Date(persona[0].fechaNacimiento);
+			let fechaHtml = fecha.getFullYear+"-"+fecha.getMonth+"-"+fecha.getDay;
+
+			document.getElementById("dni").value = persona[0].dni;
+			document.getElementById("nombre").value = persona[0].nombre;
+			document.getElementById("apellidos").value = persona[0].apellidos;
+			document.getElementById("fecha").value = fechaHtml;
+			document.getElementById("estatura").value = persona[0].estatura;
+			document.getElementById("btAnade").dataset.id = this.dataset.id;
+
+			document.getElementById("formPersonas").style.visibility = "visible";
+		}
+
+		//Función para mostrar el formulario de inserción
+		function mostrarFormInsertar() {
+			document.getElementById("formPersonas").style.visibility = "visible";
+			document.getElementById("btAnade").dataset.id = -1;
+		}
+
+		//Función que oculta formulario
+		function ocultarFormulario() {
+			document.getElementById("formPersonas").style.visibility = "hidden";
+		}
+
 		window.onload = function () {
-			// leerDatos();
-			// document.getElementById("btNuevaPersona").onclick = mostrarFormLeer;
-			// document.getElementById("btAnade").onclick = addPersona;
-			// document.getElementById("btCancelar").onclick = ocultarFormulario;
-			iniciarBBDD();
+			crearBD();
+			document.getElementById("btNuevaPersona").onclick = mostrarFormInsertar;
+			document.getElementById("btCancelar").onclick = ocultarFormulario;
+			document.getElementById("btAnade").addEventListener("click", updatePersona);
 			document.getElementById("fImagen").addEventListener("change", leerImagen);
 
 
@@ -323,6 +356,8 @@
 			<th>APELLIDOS</th>
 			<th>FECHA DE NACIMIENTO</th>
 			<th>ESTATURA</th>
+			<th>BLOB</th>
+			<th>x64</th>
 			<th>Borrar</th>
 			<th>Editar</th>
 		</tr>

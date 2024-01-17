@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="es-ES">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style type="text/css">
+        h3 {
+            color: red;
+        }
+
+        /* CSS para el formulario:   */
+        .formPersonas {
+            visibility: hidden;
+            position: absolute;
+            top: 20%;
+            left: 20%;
+            z-index: 11;
+            background-color: pink;
+            border: 2px solid maroon;
+            border-radius: 15px;
+            padding: 1em;
+            color: red;
+
+            /*	opacity:0;   */
+            /*	transition: all 1s;   */
+        }
+
+        .formPersonas div label {
+            display: block;
+            margin-top: .5em;
+        }
+
+        .formPersonas .btn {
+            display: block;
+            margin-top: 1em;
+        }
+
+
+        .ver {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+
+
+    <script src="jsstore.min.js"></script>
+    <script src="jsstore.worker.min.js"></script>
+    <script type="text/javascript" src="util2AJAX.js"></script>
+
+    <script type="text/javascript">
+
+        var connection = new JsStore.Connection(new Worker('jsstore.worker.min.js'));
+
+        async function creacionBD() {
+            var dbName = 'ListaPersonas';
+            var tblPersona = {
+                name: 'Persona',
+                columns: {
+                    id: { primaryKey: true, autoIncrement: true },
+                    dni: { notNull: true, dataType: "string" },
+                    nombre: { notNull: true, dataType: "string" },
+                    apellidos: { notNull: false, dataType: "string" },
+                    f_nacimiento: { notNull: true, dataType: "date_time" },
+                    estatura: { dataType: "number" },
+                    imagenBlob: { notNull: false, dataType: "object" },
+                    imagen64: { notNull: false, dataType: "string" }
+                }
+            };
+            var database = {
+                name: dbName,
+                tables: [tblPersona]
+            }
+
+            const isDbCreated = await connection.initDb(database);
+
+            if (isDbCreated) {
+                console.log("db created");
+                var value = {
+                    dni: '27473339T',
+                    nombre: 'Marco Elio',
+                    apellidos: 'García Gomariz',
+                    f_nacimiento: new Date(1958, 0, 11),
+                    estatura: 180,
+                    imagenBlob: null,
+                    imagen64: "image"
+                }
+
+                var insertCount = await connection.insert({
+                    into: 'Persona',
+                    values: [value]
+                });
+                console.log(`${insertCount} rows inserted`);
+
+            }
+            else {
+                console.log("db opened");
+            }
+            cargaDatos();
+        }
+
+        async function borrarPersona() {
+            if (confirm("Desea borrar al usuario " + this.dataset.nombrepersona)) {
+                var rowsDeleted = await connection.remove({
+                    from: 'Persona',
+                    where: {
+                        id: parseInt(this.dataset.idpersona)
+                    }
+                });
+                alert(rowsDeleted + ' record deleted');
+
+                cargaDatos();
+            }
+        };
+
+        async function editarPersona() {
+            console.log(this.dataset.idpersona);
+
+            document.querySelector("#formPersonas legend").textContent = "Editar usuario";
+            document.getElementById("btAnade").textContent = "Editar";
+            document.getElementById("btAnade").dataset.idpersona = this.dataset.idpersona;
+
+            var datos = await connection.select({
+                from: 'Persona',
+                where: {
+                    id: parseInt(this.dataset.idpersona)
+                }
+            });
+
+            alert(datos.length + 'record found');
+
+            document.getElementById("dni").value = datos[0].dni;
+            document.getElementById("nombre").value = datos[0].nombre;
+            document.getElementById("apellidos").value = datos[0].apellidos;
+            document.getElementById("f_nacimiento").value = datos[0].f_nacimiento;
+            document.getElementById("estatura").value = datos[0].estatura;
+            document.getElementById("imagenBlob").value = datos[0].imagenBlob;
+            document.getElementById("imagen64").value = datos[0].imagen64;
+
+            mostrarFormulario();
+        };
+
+        function nuevaPersona() {
+            console.log(this.dataset.idpersona);
+
+            document.querySelector("#formPersonas legend").textContent = "Alta en el servicio";
+            document.getElementById("btAnade").textContent = "Agregar";
+
+            mostrarFormulario();
+        }
+
+        // funcionalidad para el btAnade bien para añadir o editar una persona
+        async function nuevaOEditarPersona() {
+            var id = parseInt(this.dataset.idpersona);
+            var dni = document.getElementById("dni").value;
+            var nombre = document.getElementById("nombre").value;
+            var apellidos = document.getElementById("apellidos").value;
+            var f_nacimiento = new Date(document.getElementById("f_nacimiento").value);
+            var estatura = parseFloat(document.getElementById("estatura").value);
+            var imagenBlob = new Blob([fImagen]);
+            var imagen64 = document.getElementById("imagenPersona").src;
+
+            if (id == -1) {
+                // nueva persona
+
+                var value = {
+                    dni: dni,
+                    nombre: nombre,
+                    apellidos: apellidos,
+                    f_nacimiento: f_nacimiento,
+                    estatura: estatura,
+                    imagenBlob: imagenBlob,
+                    imagen64: imagen64
+                };
+
+                var insertCount = await connection.insert({
+                    into: 'Persona',
+                    values: [value]
+                });
+
+                console.log(`${insertCount} rows inserted`);
+
+            } else {
+                // editar persona
+                var rowsUpdated = await connection.update({
+                    in: 'Persona',
+                    where: {
+                        id: id
+                    },
+                    set: {
+                        dni: dni,
+                        nombre: nombre,
+                        apellidos: apellidos,
+                        f_nacimiento: f_nacimiento,
+                        estatura: estatura,
+                        imagenBlob: imagenBlob,
+                        imagen64: imagen64
+                    }
+                });
+
+                alert(rowsUpdated + ' rows updated');
+
+                // restablecemos el botón para añadir persona
+                document.getElementById("btAnade").dataset.idpersona = "-1";
+            }
+
+            ocultarFormulario();
+            cargaDatos();
+        }
+
+        function mostrarFormulario() {
+            var formulario = document.getElementById("formPersonas");
+            formulario.classList.add("ver");
+        }
+
+        function ocultarFormulario() {
+            var formulario = document.getElementById("formPersonas");
+            formulario.classList.remove("ver");
+        }
+
+        async function cargaDatos() {
+            var cuerpoTabla = document.getElementById("filas_tabla");
+            cuerpoTabla.innerHTML = "";
+
+            var personas = await connection.select({
+                from: 'Persona'
+            });
+
+            alert(personas.length + 'record found');
+
+            personas = personas.map(persona => {
+                return [persona.id,
+                persona.dni,
+                persona.nombre,
+                persona.apellidos,
+                persona.f_nacimiento,
+                persona.estatura,
+                persona.imagenBlob,
+                persona.imagen64]
+            });
+
+            personas.forEach(persona => {
+                //console.log(persona);
+
+                var fila = crearFila(persona);
+
+                var celdaBorrar = document.createElement("td");
+                var btnBorrar = document.createElement("button");
+                btnBorrar.type = "button";
+                btnBorrar.textContent = "Borrar";
+                btnBorrar.dataset.idpersona = persona[0];
+                btnBorrar.dataset.nombrepersona = persona[2] + " " + persona[3];
+                btnBorrar.onclick = borrarPersona;
+                celdaBorrar.appendChild(btnBorrar);
+
+                fila.appendChild(celdaBorrar);
+
+                var celdaEditar = document.createElement("td");
+                var btnEditar = document.createElement("button");
+                btnEditar.type = "button";
+                btnEditar.textContent = "Editar";
+                btnEditar.dataset.idpersona = persona[0];
+                btnEditar.onclick = editarPersona;
+                celdaEditar.appendChild(btnEditar);
+
+                fila.appendChild(celdaEditar);
+
+                cuerpoTabla.appendChild(fila);
+            });
+
+        }
+
+        function leerImagen() {
+            var fichero = this.files[0];
+            fImagen = this.files[0];
+            var reader = new FileReader();
+            reader.onloadend = function () {
+                //console.log("contenido" + reader.result);
+                document.getElementById("imagenPersona").src = reader.result;
+            }
+            reader.readAsDataURL(fichero);
+        }
+
+        function crearFila(aCol) {
+            var fila = document.createElement("tr");
+            var col, cont, imgblob, img64;
+            console.log(aCol);
+            for (var i in aCol) {
+                col = document.createElement("td");
+                if ((i == 6) || (i == 7)) {
+                    if (i == 6) {
+
+                    }
+                    if (i == 7) {
+                        img64 = document.createElement("img")
+                        img64.src = aCol[i];
+                        col.appendChild(img64);
+                    }
+                } else {
+                    cont = document.createTextNode(aCol[i]);
+                    col.appendChild(cont);
+                }
+                fila.appendChild(col);
+            }
+            return fila;
+        }
+
+        window.onload = function () {
+            creacionBD();
+            // establecemos el botón añadir para que en el método nuevaOEditarPersona
+            // reconozca por defecto la opción de añadir persona
+            document.getElementById("btAnade").dataset.idpersona = "-1";
+
+            document.getElementById("btNuevaPersona").onclick = nuevaPersona;
+            document.getElementById("btAnade").onclick = nuevaOEditarPersona;
+            document.getElementById("btCancelar").onclick = ocultarFormulario;
+
+            document.getElementById("imagen64").onchange = leerImagen;
+        }
+
+    </script>
+</head>
+
+<body>
+    <h3>Registro de Usuarios</h3>
+
+    <div id="formPersonas" class="formPersonas">
+        <fieldset>
+            <legend>Alta en el servicio</legend>
+            <div>
+                <label for="dni">DNI</label>
+                <input type="text" id="dni" size="10" maxlength="9" value="11111111T" />
+            </div>
+            <div>
+                <label for="nombre">Nombre</label>
+                <input type="text" id="nombre" value="Ejemplo" />
+            </div>
+            <div>
+                <label for="apellidos">Apellidos</label>
+                <input type="text" id="apellidos" size="40" value="Ejemplo" />
+            </div>
+            <div>
+                <label for="f_nacimiento">Fecha Nacimiento</label>
+                <input type="date" id="f_nacimiento" size="40" value="1111-11-11" />
+            </div>
+            <div>
+                <label for="estatura">Estatura</label>
+                <input type="number" id="estatura" size="40" value="100" />
+            </div>
+            <div>
+                <label for="imagenBlob">Imagen Blob</label>
+                <input type="image" id="imagenBlob" size="40" value="" />
+            </div>
+            <div>
+                <label for="imagen64">Imagen 64</label>
+                <input type="file" id="imagen64" size="40" value="" />
+            </div>
+            <div class="imagen">
+                <img id="imagenPersona" src="" />
+            </div>
+            <div class="btn">
+                <button id="btAnade">Añadir</button>
+                <button id="btCancelar">Cancelar</button>
+            </div>
+        </fieldset>
+    </div>
+
+
+
+    <br />
+    <button class="btn" id="btNuevaPersona">Nueva persona</button>
+    <br><br>
+    <table id="tabla_personas" border="1">
+        <tr>
+            <th>ID</th>
+            <th>DNI</th>
+            <th>NOMBRE</th>
+            <th>APELLIDOS</th>
+            <th>FECHA NAC</th>
+            <th>ESTATURA</th>
+            <th>IMAGEN BLOB</th>
+            <th>IMAGEN 64</th>
+            <th>Borrar</th>
+            <th>Editar</th>
+        </tr>
+
+        <tbody id="filas_tabla">
+
+        </tbody>
+    </table>
+</body>
+
+</html>
