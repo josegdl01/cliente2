@@ -25,6 +25,10 @@
 			/*opacity:0;   
 			transition: all 1s;*/
 		}
+		.imagen{
+			height: 150px;
+			width: 150px;
+		}
 
 		.formPersonas div label {
 			display: block;
@@ -65,13 +69,31 @@
 					estatura: { dataType: "number" },
 					imagenBlob: { notNull: false, dataType: "object" },
 					imagen64: { notNull: false, dataType: "string" }
+				},
+				alter: {
+					4: {
+						add: {
+							estadoCivil: {
+								dataType: 'number',
+								default: 1
+							}
+						}
+					}
 				}
 			}
+			var tabla2 = {
+				name: "EstadoCivil",
+				columns: {
+					id: { primaryKey: true, autoIncrement: true },
+					nombre: { dataType: "string" }
+				}
+			};
 
 			//Creamos el objeto base de datos
 			var db = {
 				name: nombreDB,
-				tables: [tablaPersonas]
+				tables: [tablaPersonas, tabla2],
+				version: 4
 			}
 
 			//Creación de la base de datos usando un método de la API JsStore, recibe el objeto recién creado
@@ -89,12 +111,9 @@
 					imagenBlob: null,
 					imagen64: "picture"
 				}
-
-				//INSERT
 				var insertCount = await conexionBD.insert({
-					into: 'Persona',
-					values: [value]
-				});
+					values: value
+				})
 				console.log(`${insertCount} filas insertadas`);
 			} else {
 				console.log("Base de datos abierta, 0 datos insertados");
@@ -121,6 +140,7 @@
 					element.apellidos,
 					element.fechaNacimiento,
 					element.estatura,
+					element.estadoCivil,
 					element.imagenBlob,
 					element.imagen64
 				]
@@ -128,13 +148,28 @@
 
 			console.log(personas);
 
-			function insertarFila(arrayFila) {
+			async function insertarFila(arrayFila) {
+				console.log(arrayFila);
 				let fila = document.createElement("tr");
-				let casilla; let contenido;
-				arrayFila.forEach(function (e) {
+				let casilla, contenido;
+				arrayFila.forEach(function (e, i) {
 					casilla = document.createElement("td");
-					contenido = document.createTextNode(e);
-					casilla.appendChild(contenido);
+					console.log(i);
+					if (i == 7 || i == 8) {
+						if (i == 8) {
+							let imagen = document.createElement("img");
+							imagen.src = e;
+							imagen.style.height="200px";
+							imagen.style.width="200px";
+							casilla.appendChild(imagen);
+						} else {
+							// let blob = new Blob([ficheroImagen]);
+							// casilla.appendChild(blob);
+						}
+					} else {
+						contenido = document.createTextNode(e);
+						casilla.appendChild(contenido);
+					}
 					fila.appendChild(casilla);
 				});
 				return fila;
@@ -165,8 +200,6 @@
 			});
 		}//rellenarTabla
 
-
-
 		//FUNCIÓN PARA BORRAR PERSONAS
 		async function deletePersona() {
 			if (confirm("¿Desea borrar a la persona " + this.dataset.nombre + "?")) {
@@ -187,7 +220,7 @@
 		async function updatePersona() {
 			console.log(document.getElementById("fecha").value);
 
-			if(document.getElementById("fecha").value == ""){
+			if (document.getElementById("fecha").value == "") {
 				alert("Se debe seleccionar una fecha válida");
 				return false;
 			}
@@ -197,8 +230,12 @@
 			let apellidos = document.getElementById("apellidos").value;
 			let fechaNac = new Date(document.getElementById("fecha").value);
 			let estatura = parseFloat(document.getElementById("estatura").value);
+			let estadoCivil = parseInt(document.getElementById("estadoCivilId").value);
 			let imagenBlob = null;
 			let imagen64 = document.getElementById("imagen").src;
+			if(estadoCivil == -1){
+				estadoCivil = 1;
+			}
 
 			if (this.dataset.id == -1) {
 				var value = {
@@ -207,6 +244,7 @@
 					apellidos: apellidos,
 					fechaNacimiento: fechaNac,
 					estatura: estatura,
+					estadoCivil: estadoCivil,
 					imagenBlob: imagenBlob,
 					imagen64: imagen64
 				};
@@ -217,6 +255,13 @@
 				});
 
 				console.log(`${filasInsertadas} filas insertadas`);
+
+				document.getElementById("dni").value = "DNI";
+				document.getElementById("nombre").value = "NOMBRE";
+				document.getElementById("apellidos").value = "APELLIDOS";
+				document.getElementById("fecha").value = "";
+				document.getElementById("estatura").value = "ESTATURA";
+				document.getElementById("estadoCivilId").value = -1;
 
 				ocultarFormulario();
 				rellenarTabla();
@@ -229,6 +274,7 @@
 						apellidos: apellidos,
 						fechaNacimiento: fechaNac,
 						estatura: estatura,
+						estadoCivil: estadoCivil,
 						imagenBlob: imagenBlob,
 						imagen64: imagen64
 					},
@@ -239,11 +285,19 @@
 
 				console.log(`${filasActualizadas} filas actualizadas`);
 
+				document.getElementById("dni").value = "DNI";
+				document.getElementById("nombre").value = "NOMBRE";
+				document.getElementById("apellidos").value = "APELLIDOS";
+				document.getElementById("fecha").value = "";
+				document.getElementById("estatura").value = "ESTATURA";
+				document.getElementById("estadoCivilId").value = -1;
+
 				ocultarFormulario();
 				rellenarTabla();
 			}
 		}
 
+		//Función que lee la imagen x64
 		function leerImagen() {
 			var fichero = this.files[0];
 			ficheroImagen = this.files[0];
@@ -262,13 +316,13 @@
 			let persona = await conexionBD.select({
 				from: "Persona",
 				where: {
-					id:parseInt(this.dataset.id)
+					id: parseInt(this.dataset.id)
 				}
 			});
 
 			console.log(new Date(persona[0].fechaNacimiento));
 			let fecha = new Date(persona[0].fechaNacimiento);
-			let fechaHtml = fecha.getFullYear+"-"+fecha.getMonth+"-"+fecha.getDay;
+			let fechaHtml = fecha.getFullYear + "-" + fecha.getMonth + "-" + fecha.getDay;
 
 			document.getElementById("dni").value = persona[0].dni;
 			document.getElementById("nombre").value = persona[0].nombre;
@@ -276,6 +330,7 @@
 			document.getElementById("fecha").value = fechaHtml;
 			document.getElementById("estatura").value = persona[0].estatura;
 			document.getElementById("btAnade").dataset.id = this.dataset.id;
+			document.getElementById("btAnade").innerHTML = "Editar";
 
 			document.getElementById("formPersonas").style.visibility = "visible";
 		}
@@ -284,6 +339,7 @@
 		function mostrarFormInsertar() {
 			document.getElementById("formPersonas").style.visibility = "visible";
 			document.getElementById("btAnade").dataset.id = -1;
+			document.getElementById("btAnade").innerHTML = "Añadir";
 		}
 
 		//Función que oculta formulario
@@ -291,8 +347,19 @@
 			document.getElementById("formPersonas").style.visibility = "hidden";
 		}
 
+		//Función para llenar el Select
+		async function llenarSelect(op) {
+			var estadosCiviles = await conexionBD.select({
+				from: "EstadoCivil"
+			});
+			for (var i = 0; i < estadosCiviles.length; i++) {
+				op.options[op.options.length] = new Option(estadosCiviles[i].nombre, estadosCiviles[i].id);
+			}
+		}
+
 		window.onload = function () {
 			crearBD();
+			llenarSelect(document.getElementById("estadoCivilId"));
 			document.getElementById("btNuevaPersona").onclick = mostrarFormInsertar;
 			document.getElementById("btCancelar").onclick = ocultarFormulario;
 			document.getElementById("btAnade").addEventListener("click", updatePersona);
@@ -311,15 +378,15 @@
 			<legend>Alta en el servicio</legend>
 			<div>
 				<label for="dni">DNI</label>
-				<input type="text" id="dni" size="10" maxlength="9" value="27473339T" />
+				<input type="text" id="dni" size="10" maxlength="9" value="DNI" />
 			</div>
 			<div>
 				<label for="nombre">Nombre</label>
-				<input type="text" id="nombre" value="Marco Elio" />
+				<input type="text" id="nombre" value="NOMBRE" />
 			</div>
 			<div>
 				<label for="apellidos">Apellidos</label>
-				<input type="text" id="apellidos" size="40" value="García Gomariz" />
+				<input type="text" id="apellidos" size="40" value="APELLIDOS" />
 			</div>
 			<div>
 				<label for="fecha">Fecha de nacimiento</label>
@@ -327,14 +394,20 @@
 			</div>
 			<div>
 				<label for="estatura">Estatura</label>
-				<input type="text" id="estatura" size="40" value="1.78" />
+				<input type="text" id="estatura" size="40" value="00" />
+			</div>
+			<div>
+				<label for="estadoCivilId">Estado Civil</label>
+				<select id="estadoCivilId">
+					<option value="-1">Seleccione un estado civil</option>
+				</select>
 			</div>
 			<div>
 				<label for="fImagen">Imagen</label>
 				<input type="file" id="fImagen" />
 			</div>
 			<div>
-				<img id="imagen" src="">
+				<img id="imagen" class="imagen" src="">
 			</div>
 			<div class="btn">
 				<button id="btAnade">Añadir </button>
@@ -356,6 +429,7 @@
 			<th>APELLIDOS</th>
 			<th>FECHA DE NACIMIENTO</th>
 			<th>ESTATURA</th>
+			<th>ESTADO CIVIL</th>
 			<th>BLOB</th>
 			<th>x64</th>
 			<th>Borrar</th>
