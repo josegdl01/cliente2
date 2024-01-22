@@ -10,4 +10,15 @@ import { RouterOutlet } from '@angular/router';
 })
 export class AppComponent {
   title = 'bootcamp-angular';
+
+  public titulo: string;
+  public objeto;
+
+  constructor(){
+    this.titulo = "Titulaso";
+
+    this.objeto = {
+      dni: '29498314D'
+    };
+  }
 }
