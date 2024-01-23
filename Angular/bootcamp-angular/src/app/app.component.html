@@ -1,3 +1,10 @@
 <p>Párrafo parrafero</p>
-<p>inserción: {{titulo}}</p>
-<p>DNI: {{objeto.DNI}}</p>
+
+<label>
+    Entrada de texto:
+</label><input id="entradaId" type="text" [(ngModel)]="componente">
+<p>Valor en formato solo lectura: {{componente}}</p>
+<hr>
+<app-search [labelButton]="'buscá'" [placeholder]="'Escriba aquí'" (searchEvent)="search($event)">
+</app-search>
+<p>{{msgEventSearch}}</p>
