@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { ListadoComponent } from './componentes/listado/listado.component';
 import { FormPersonaComponent } from './componentes/form-persona/form-persona.component';
 import { PAjaxService } from './servicios/p-ajax.service';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -15,7 +16,8 @@ import { PAjaxService } from './servicios/p-ajax.service';
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    HttpClientModule
   ],
   providers: [
     provideClientHydration(),
