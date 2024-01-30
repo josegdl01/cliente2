@@ -25,6 +25,6 @@ export class AppComponent {
   }
 
   search(event: any) {
-    this.msgEventSearch = event.query + ' => ' + event.resultado;
+    this.msgEventSearch = event.query.substring(0,3) + ' => ' + event.resultado;
   }
 }

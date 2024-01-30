@@ -5,6 +5,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ListadoComponent } from './componentes/listado/listado.component';
 import { FormPersonaComponent } from './componentes/form-persona/form-persona.component';
+import { PAjaxService } from './servicios/p-ajax.service';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import { FormPersonaComponent } from './componentes/form-persona/form-persona.co
     AppRoutingModule
   ],
   providers: [
-    provideClientHydration()
+    provideClientHydration(),
+    PAjaxService
   ],
   bootstrap: [AppComponent]
 })
