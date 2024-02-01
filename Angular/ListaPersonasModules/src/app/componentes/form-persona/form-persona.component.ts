@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { PAjaxService } from '../../servicios/p-ajax.service';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-form-persona',
@@ -7,4 +9,7 @@ import { Component } from '@angular/core';
 })
 export class FormPersonaComponent {
 
+  constructor(private pAjax: PAjaxService, private ruta: Router, private ar: ActivatedRoute){
+    
+  }
 }

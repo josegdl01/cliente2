@@ -1,1 +1,21 @@
-<p>form-persona works!</p>
+<div class ="container" id="formPersonas" class="formPersonas">
+    <fieldset>
+        <legend>Alta en el servicio</legend>
+        <div>
+            <label for="dni">DNI</label>
+            <input type="text" id="dni" size="10" maxlength="9" value="27473339T" />
+        </div>
+        <div>
+            <label for="nombre">Nombre</label>
+            <input type="text" id="nombre" value="Marco Elio" />
+        </div>
+        <div>
+            <label for="apellidos">Apellidos</label>
+            <input type="text" id="apellidos" size="40" value="García Gomariz" />
+        </div>
+        <div class="btn">
+            <button id="btAnade">Añadir </button>
+            <button role="button" routerLink="/">Cancelar </button>
+        </div>
+    </fieldset>
+</div>
