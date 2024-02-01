@@ -32,4 +32,14 @@ export class ListadoComponent {
   irANuevaPersona() {
     this.ruta.navigate(['personas-add', -1]);
   }
+
+  borrarPersona(persona: Persona){
+    console.log("ID RECIBIDO: ",persona.id);
+
+    if(confirm("Seguro que deseas borrar a: " + persona.nombre)){
+      this.pAjax.borrarPersona(persona).subscribe(res =>{
+        this.listaPersonas = res;
+      });
+    }
+  }
 }
