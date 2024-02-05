@@ -27,6 +27,7 @@ export class FormPersonasComponent {
 
     this.personId = ar.snapshot.params["id"];
     console.log(this.personId);
+    //AL NO USAR EL MÉTODO NGONINIT, USAMOS EL CONSTRUCTOR
     if(this.personId != -1){
       this.pAjax.selectPerson(this.personId).subscribe({
         next: res => this.persona = res,
@@ -39,6 +40,22 @@ export class FormPersonasComponent {
   }
 
   goBack(){
+    this.ruta.navigate([""]);
+  }
+
+  insertModPerson(persona: Persona){
+    console.log("ONSUBMITFORM: ", persona)
+    if(this.personId == -1){
+      this.pAjax.insertPersona(persona).subscribe();
+    } else {
+      let personaIns: Persona = {
+        id: this.personId,
+        dni:persona.dni,
+        nombre:persona.nombre,
+        apellidos: persona.apellidos
+      }
+      this.pAjax.updatePersona(personaIns).subscribe();
+    }
     this.ruta.navigate([""]);
   }
 }

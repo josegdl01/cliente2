@@ -5,6 +5,7 @@
     
     <table class="table table-bordered">
         <thead>
+            <th>ID</th>
             <th>DNI</th>
             <th>NOMBRE</th>
             <th>APELLIDOS</th>
@@ -15,6 +16,7 @@
         <tbody>
             @for (p of personas; track $index){
             <tr>
+                <td>{{p.id}}</td>
                 <td>{{p.dni}}</td>
                 <td>{{p.nombre}}</td>
                 <td>{{p.apellidos}}</td>

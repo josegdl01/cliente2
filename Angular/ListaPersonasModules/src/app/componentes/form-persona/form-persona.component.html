@@ -1,5 +1,5 @@
 <div id="formPersonas" class="formPersonas">
-    <form #formPersona="ngForm" (ngSubmit)="(onSubmitForm(formPersona.value))">
+    <form #formPersona="ngForm" ngSubmit="(onSubmitForm(formPersona.value))">
         <legend>Alta en el servicio</legend>
         <div>
             <label for="dni">DNI: </label>
@@ -15,7 +15,7 @@
             <input name="apellidos" type="text" id="apellidos" size="40" required [(ngModel)]="persona.apellidos" />
         </div>
         <div>
-            <button id="btAnade" [disabled]="!formPersona.valid">{{textoBoton}} </button>
+            <button id="btAnade" [disabled]="!formPersona.valid">{{textoBoton}}</button>
             <span> | </span>
             <button routerLink="" id="btCancelar">Cancelar </button>
         </div>

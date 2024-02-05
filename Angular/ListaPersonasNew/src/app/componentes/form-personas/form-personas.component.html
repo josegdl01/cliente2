@@ -1,25 +1,25 @@
-<form>
-    <div>
+<form #personForm="ngForm" (ngSubmit)="insertModPerson(personForm.value)" >
+    <div> 
         <label>
             DNI:
-            <input name="dni" type="text" value="{{persona.dni}}">
         </label>
+        <input name="dni" type="text" required [(ngModel)]="persona.dni">
     </div>
 
     <div>
         <label>
             NOMBRE:
-            <input name="nombre" type="text" value="{{persona.nombre}}">
         </label>
+        <input name="nombre" type="text" required [(ngModel)]="persona.nombre">
     </div>
 
     <div>
         <label>
             APELLIDOS:
-            <input name="apellidos" type="text" value="{{persona.apellidos}}">
         </label>
+        <input name="apellidos" type="text" required [(ngModel)]="persona.apellidos">
     </div>
 
-    <button>{{buttonText}}</button>
+    <button [disabled]="!personForm.valid" >{{buttonText}}</button>
     <button (click)="goBack()">CANCELAR</button>
 </form>

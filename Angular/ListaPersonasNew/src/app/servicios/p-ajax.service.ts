@@ -48,6 +48,9 @@ export class PAjaxService {
       nombre: persona.nombre,
       apellidos: persona.apellidos
     });
+    console.log("PARÁMETRO RECIBIDO EN MÉTODO INSERTPERSONA: ", param);
+
+    return this.peticion.post<Persona []>(this.url, param);
   }
 
   updatePersona(persona: Persona){
@@ -58,5 +61,8 @@ export class PAjaxService {
       nombre: persona.nombre,
       apellidos: persona.apellidos
     });
+    console.log("PARÁMETRO RECIBIDO EN MÉTODO UPDATEPERSONA: ", param);
+
+    return this.peticion.post<Persona []>(this.url, param);
   }
 }
