@@ -18,38 +18,47 @@ export class PAjaxService {
     return this.httpClient.post<Persona[]>(this.url, param);
   }
 
-  borrarPersona(id: number, nombre: string) {
-    console.log("Borrando a este pibe: " + nombre);
+  seleccionarPersona(id: number) {
+    console.log("Estamos seleccionando a una sola persona");
+    let param = JSON.stringify({servicio: "selPersonaID",
+                                id: id});
+    return this.httpClient.post<Persona>(this.url, param);
+  }
+
+  borrarPersona(persona: Persona) {
+    console.log("Estamos borrando a una persona");
+
     let param = JSON.stringify({
       servicio: "borrar",
-      id: id
+      id: persona.id        
     });
 
-    return this.httpClient.post<Persona[]>(this.url, param);
+    return this.httpClient.post<Persona []>(this.url, param);
   }
 
-  editarPersona(id: number, dni: string, nombre: string, apellidos: string) {
-    console.log("Editando a este pibe: ");
-    let param = JSON.stringify({
-      servicio: "modificar",
-      dni: dni,
-      nombre: nombre,
-      apellidos: apellidos,
-      id: id
-    });
-
-    return this.httpClient.post<Persona[]>(this.url, param);
-  }
-
-  insertarPersona(dni: string, nombre: string, apellidos: string) {
-    console.log("Borrando a este pibe: ");
+  anyadirPersona(persona: Persona) {
+    console.log("Estamos añadiendo a una persona");
+    
     let param = JSON.stringify({
       servicio: "insertar",
-      dni: dni,
-      nombre: nombre,
-      apellidos: apellidos
+      dni: persona.dni,
+      nombre: persona.nombre,
+      apellidos: persona.apellidos
     });
 
+    return this.httpClient.post<Persona[]>(this.url, param);
+  }
+
+  modificarPersona(persona: Persona) {
+    console.log("Estamos modificando una persona");
+    let param = JSON.stringify({
+      servicio: "modificar",
+      dni: persona.dni,
+      nombre: persona.nombre,
+      apellidos: persona.apellidos,
+      id:persona.id
+    });
+    console.log("PARAMETRO RECIBIDO: ", param);
     return this.httpClient.post<Persona[]>(this.url, param);
   }
 }

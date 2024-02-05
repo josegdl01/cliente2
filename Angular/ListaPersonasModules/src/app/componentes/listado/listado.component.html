@@ -1,6 +1,7 @@
 <main class="container">
-    <button class="btn btn-primary" routerLink="personas-add/-1" role="button">Añadir Persona</button>
-    <button type="button" class="btn btn-primary" routerLink="personas-add/-1" (click)="irANuevaPersona()">Añadir Persona</button>
+    <button class="btn btn-primary" routerLink="/personas-add/-1" role="button">Añadir Persona</button>
+    <span> | </span>
+    <button type="button" class="btn btn-primary" (click)="irANuevaPersona()">Añadir Persona</button>
     <table class="table table-class sm">
         <thead>
             <th>ID</th>
@@ -17,8 +18,8 @@
                 <td>{{p.dni}}</td>
                 <td>{{p.nombre}}</td>
                 <td>{{p.apellidos}}</td>
-                <td><button type="button">Borrar</button></td>
-                <td><button type="button">Editar</button></td>
+                <td><button (click)="borrarPersona(p)" type="button">Borrar</button></td>
+                <td><button routerLink="/personas-add/{{p.id}}" type="button">Editar</button></td>
             </tr>
         </tbody>
     </table> 

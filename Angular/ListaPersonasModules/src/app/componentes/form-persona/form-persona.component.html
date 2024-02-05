@@ -1,21 +1,23 @@
-<div class ="container" id="formPersonas" class="formPersonas">
-    <fieldset>
+<div id="formPersonas" class="formPersonas">
+    <form #formPersona="ngForm" (ngSubmit)="(onSubmitForm(formPersona.value))">
         <legend>Alta en el servicio</legend>
         <div>
-            <label for="dni">DNI</label>
-            <input type="text" id="dni" size="10" maxlength="9" value="27473339T" />
+            <label for="dni">DNI: </label>
+            <input name="dni" type="text" id="dni" size="10" maxlength="9" required [(ngModel)]="persona.dni" #dni="ngModel"/>
+            <div class="alert alert-danger" [hidden]="dni.valid || dni.pristine">METE ARGO AQUÍ OME</div>
         </div>
         <div>
-            <label for="nombre">Nombre</label>
-            <input type="text" id="nombre" value="Marco Elio" />
+            <label for="nombre">NOMBRE: </label>
+            <input name="nombre" type="text" id="nombre" required [(ngModel)]="persona.nombre" />
         </div>
         <div>
-            <label for="apellidos">Apellidos</label>
-            <input type="text" id="apellidos" size="40" value="García Gomariz" />
+            <label for="apellidos">APELLIDOS: </label>
+            <input name="apellidos" type="text" id="apellidos" size="40" required [(ngModel)]="persona.apellidos" />
         </div>
-        <div class="btn">
-            <button id="btAnade">Añadir </button>
-            <button role="button" routerLink="/">Cancelar </button>
+        <div>
+            <button id="btAnade" [disabled]="!formPersona.valid">{{textoBoton}} </button>
+            <span> | </span>
+            <button routerLink="" id="btCancelar">Cancelar </button>
         </div>
-    </fieldset>
+    </form>
 </div>
