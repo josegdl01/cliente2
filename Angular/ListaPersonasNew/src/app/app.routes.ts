@@ -6,10 +6,10 @@ export const routes: Routes =
 [
     {
         path: "",
-        component:ListadoComponent
+        component: ListadoComponent
     },
     {
         path:"personas-add/:id",
-        component:FormPersonasComponent
+        component: FormPersonasComponent
     }
 ];

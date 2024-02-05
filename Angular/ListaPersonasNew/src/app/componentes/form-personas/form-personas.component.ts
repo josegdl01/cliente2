@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
 import { Persona } from '../../modelos/persona';
 import { PAjaxService } from '../../servicios/p-ajax.service';
-import { Router } from 'express';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -16,6 +15,7 @@ export class FormPersonasComponent {
 
   public persona: Persona;
   public buttonText: string;
+  private personId: number;
 
   constructor(private pAjax: PAjaxService, private ruta: Router, private ar: ActivatedRoute){
     this.persona = {
@@ -24,6 +24,15 @@ export class FormPersonasComponent {
       nombre:"NOMBRE",
       apellidos:"APELLIDOS"
     };
+
+    this.personId = ar.snapshot.params["id"];
     this.buttonText = "AÑADIR"
+  }
+
+  fillForm(persona: Persona){
+    
+    if(this.personId != -1){
+
+    }
   }
 }

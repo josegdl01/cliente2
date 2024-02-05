@@ -11,13 +11,46 @@ export class PAjaxService {
 
   constructor(private peticion: HttpClient) {
     this.url = "http://localhost/serviciosWeb/persona/servidor.php";
-   }
+  }
 
-  selectAll(){
+  selectAll() {
     let param = JSON.stringify({
       servicio: "listar"
     });
     console.log("PARÁMETRO RECIBIDO EN MÉTODO SELECTALL: ", param);
-    return this.peticion.post<Persona []>(this.url, param);
+    return this.peticion.post<Persona[]>(this.url, param);
+  }
+
+  selectPerson(id: number) {
+    let param = JSON.stringify({
+      servicio: "selPersonaID",
+      id: id
+    });
+  }
+
+  deletePerson(persona: Persona) {
+    let param = JSON.stringify({
+      servicio: "borrar",
+      id: persona.id
+    });
+  }
+
+  insertPersona(persona: Persona){
+    let param = JSON.stringify({
+      servicio: "insertar",
+      dni: persona.dni,
+      nombre: persona.nombre,
+      apellidos: persona.apellidos
+    });
+  }
+
+  updatePersona(persona: Persona){
+    let param = JSON.stringify({
+      servicio: "modificar",
+      id: persona.id,
+      dni: persona.dni,
+      nombre: persona.nombre,
+      apellidos: persona.apellidos
+    });
   }
 }
