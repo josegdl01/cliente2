@@ -26,13 +26,19 @@ export class FormPersonasComponent {
     };
 
     this.personId = ar.snapshot.params["id"];
-    this.buttonText = "AÑADIR"
+    console.log(this.personId);
+    if(this.personId != -1){
+      this.pAjax.selectPerson(this.personId).subscribe({
+        next: res => this.persona = res,
+        error: err => console.error(err)
+      });
+      this.buttonText = "MODIFICAR";
+    } else {
+      this.buttonText = "AÑADIR";
+    }
   }
 
-  fillForm(persona: Persona){
-    
-    if(this.personId != -1){
-
-    }
+  goBack(){
+    this.ruta.navigate([""]);
   }
 }

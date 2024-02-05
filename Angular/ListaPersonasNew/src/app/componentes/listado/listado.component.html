@@ -18,8 +18,8 @@
                 <td>{{p.dni}}</td>
                 <td>{{p.nombre}}</td>
                 <td>{{p.apellidos}}</td>
-                <td><button>BORRAR</button></td>
-                <td><button>EDITAR</button></td>
+                <td><button (click)="deletePerson(p)">BORRAR</button></td>
+                <td><button routerLink="/personas-add/{{p.id}}" role="button">EDITAR</button></td>
             </tr>
             }
         </tbody>

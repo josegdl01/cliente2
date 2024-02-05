@@ -26,6 +26,9 @@ export class PAjaxService {
       servicio: "selPersonaID",
       id: id
     });
+    console.log("PARÁMETRO RECIBIDO EN MÉTODO SELECTPERSON: " , param);
+
+    return this.peticion.post<Persona>(this.url, param);
   }
 
   deletePerson(persona: Persona) {
@@ -33,6 +36,9 @@ export class PAjaxService {
       servicio: "borrar",
       id: persona.id
     });
+    console.log("PARÁMETRO RECIBIDO EN MÉTODO DELETEPERSON: " , param);
+
+    return this.peticion.post<Persona[]>(this.url, param);
   }
 
   insertPersona(persona: Persona){

@@ -9,17 +9,17 @@
     <div>
         <label>
             NOMBRE:
-            <input name="nombre" type="text">
+            <input name="nombre" type="text" value="{{persona.nombre}}">
         </label>
     </div>
 
     <div>
         <label>
             APELLIDOS:
-            <input name="apellidos" type="text" >
+            <input name="apellidos" type="text" value="{{persona.apellidos}}">
         </label>
     </div>
 
     <button>{{buttonText}}</button>
-    <button routerLink="/">CANCELAR</button>
+    <button (click)="goBack()">CANCELAR</button>
 </form>
