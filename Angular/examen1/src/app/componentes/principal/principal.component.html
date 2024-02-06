@@ -1,0 +1,17 @@
+<table>
+    <thead>
+        <th>ID</th>
+        <th>NÚMERO</th>
+        <th>CLIENTE</th>
+        <th>FECHA</th>
+    </thead>
+
+    <tbody>
+        <tr *ngFor="let fact of facturas">
+            <td>{{fact.id}}</td>
+            <td><a routerLink="lista-detalle/{{fact.id}}/{{fact.numero}}">{{fact.numero}}</a></td>
+            <td>{{fact.id_cliente}}</td>
+            <td>{{fact.fecha}}</td>
+        </tr>
+    </tbody>
+</table>

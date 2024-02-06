@@ -1,0 +1,65 @@
+<h2>Detalle de la factura: {{numeroFact}}</h2>
+<table>
+    <thead>
+        <th>ID</th>
+        <th>CANTIDAD</th>
+        <th>CONCEPTO</th>
+        <th>PRECIO</th>
+        <th>TIPO IVA</th>
+        <th>IVA</th>
+        <th>TOTAL</th>
+        <th>EDITAR</th>
+        <th>BORRAR</th>
+    </thead>
+
+    @for (det of detalles; track $index){
+    <tr>
+        <td>{{det.id}}</td>
+        <td>{{det.cantidad}}</td>
+        <td>{{det.concepto}}</td>
+        <td>{{det.precio}}</td>
+        <td>{{det.tipo_iva}}</td>
+        <td>{{((det.tipo_iva/100)*(det.precio*det.cantidad)).toFixed(2)}}</td>
+        <td>{{((((det.tipo_iva/100)*(det.precio*det.cantidad)))+det.precio*det.cantidad).toFixed(2)}}</td>
+        <td><button>Editar</button></td>
+        <td><button (click)="borrarDetalle(det.id, idActual)">Borrar</button></td>
+    </tr>}
+    <tr>
+        <td>TOTALES:</td>
+        <td></td>
+        <td></td>
+    </tr>
+</table>
+
+<button (click)="mostrarForm()">{{textoBoton}}</button>
+
+@if(mostrar){
+    <div>
+        <form #formDeta="ngForm" (ngSubmit)="insertDetalle(formDeta.value)">
+            <div>
+                <label>CANTIDAD</label>
+                <input type="number" name="cantidad" required [ngModel]="det.cantidad">
+            </div>
+    
+            <div>
+                <label>CONCEPTO</label>
+                <input type="text" name="concepto" required [ngModel]="det.concepto">
+            </div>
+    
+            <div>
+                <label>PRECIO</label>
+                <input type="text" name="precio" required [ngModel]="det.precio">
+            </div>
+    
+            <div>
+                <label>TIPO IVA:</label>
+                <input type="text" name="tipo_iva" required [ngModel]="det.tipo_iva">
+            </div>
+    
+    
+            <button>Añadir Línea de Detalle</button>
+        </form>
+    </div>
+}
+
+<button routerLink="">VOLVER</button>
