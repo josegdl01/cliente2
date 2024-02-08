@@ -1,0 +1,23 @@
+<h1 style="text-align: center;">OWNERS</h1>
+<table class="table">
+    <thead>
+        <th>FULL NAME</th>
+        <th>ADDRESS</th>
+        <th>CITY</th>
+        <th>TELEPHONE</th>
+        <th>PETS</th>
+    </thead>
+    
+    <tbody>
+        @for (owner of owners; track $index){
+            <tr>
+                <td><a routerLink="/owner/{{owner.id}}">{{owner.firstName + " " + owner.lastName}}</a></td>
+                <td>{{owner.address}}</td>
+                <td>{{owner.city}}</td>
+                <td>{{owner.telephone}}</td>
+                <td>{{owner.pets}}</td>
+            </tr>
+        }
+    </tbody>
+    <button>Add Owner</button>
+</table>
