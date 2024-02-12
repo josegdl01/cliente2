@@ -1,0 +1,35 @@
+<form #ownerForm="ngForm" (ngSubmit)="insertModOwner(ownerForm.value)">
+    <div>
+        <label>NOMBRE: </label>
+        <input type="text" name="firstName" required [(ngModel)]="owner.firstName">
+    </div>
+    <div>
+        <label>APELLIDO: </label>
+        <input type="text" name="lastName" required [(ngModel)]="owner.lastName">
+    </div>
+    <div>
+        <label>DIRECCIÓN: </label>
+        <input type="text" name="address" required [(ngModel)]="owner.address">
+    </div>
+    <div>
+        <label>CIUDAD: </label>
+        <input type="text" name="city" required [(ngModel)]="owner.city">
+    </div>
+    <div>
+        <label>TELÉFONO: </label>
+        <input type="text" name="telephone" required [(ngModel)]="owner.telephone">
+    </div>
+    <div style="visibility: id;">
+        <label>ID: </label>
+        <input readonly type="number" name="id" required [(ngModel)]="owner.id">
+    </div>
+    <div style="visibility: visible;">
+        <label>PETS: </label>
+        <input readonly type="text" name="pets" required [(ngModel)]="owner.pets">
+    </div>
+
+    <div>
+        <button type="submit">Enviar</button>
+        <button routerLink="/owner">Cancelar</button>
+    </div>
+</form>

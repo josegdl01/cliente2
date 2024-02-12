@@ -1,12 +1,16 @@
-<div class="container">
+<div class="container">    
+    <h2 style="visibility: hidden;">Id: {{owner.id}}</h2>
     <h2>Full Name: {{owner.firstName +" "+ owner.lastName}}</h2>
     <h2>Address: {{owner.address}}</h2>
     <h2>City: {{owner.city}}</h2>
     <h2>Phone: {{owner.telephone}}</h2>
+    <h2 style="visibility: hidden;">Id: {{owner.pets}}</h2>
 </div>
 <nav>
-    <button>Go Back</button>
-    <button>Delete Owner</button>
-    <button>Edit</button>
+    <button routerLink="/owner">Go Back</button>
+    <button routerLink="/add-owner/{{owner.id}}">Edit</button>
+    @if(owner.pets == null){
+        <button (click)="deleteOwner(owner.id)">Delete Owner</button>
+    }
     <button>Add New Pet</button>
 </nav>

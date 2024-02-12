@@ -1,0 +1,17 @@
+<h1 style="text-align: center;">VETS</h1>
+<table class="table">
+    <thead>
+        <th>ID</th>
+        <th>NOMBRE</th>
+    </thead>
+    
+    <tbody>
+        @for (vet of vets; track $index){
+            <tr>
+                <td>{{vet.id}}</td>
+                <a routerLink="/add-vet/{{vet.id}}"><td>{{vet.firstName + " " + vet.lastName}}</td></a>
+            </tr>
+        }
+    </tbody>
+    <button routerLink="/add-vet/-1">Add Vet</button>
+</table>
