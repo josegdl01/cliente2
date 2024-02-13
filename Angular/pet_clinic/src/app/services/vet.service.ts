@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Vet } from '../models/vet';
+import { environment } from '../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root'
 })
 export class VetService {
 
-  private url = "http://localhost/serviciosWeb/petclinic/servicios.php";
+  private url = environment.API_URL;
   constructor(private http: HttpClient) { }
 
   selectVets() {
@@ -56,6 +57,6 @@ export class VetService {
     });
     console.log("DELETE VET RECIBE: ", param);
 
-    return this.http.post<Vet[]>(this.url, param);
+    return this.http.post<any>(this.url, param);
   }
 }

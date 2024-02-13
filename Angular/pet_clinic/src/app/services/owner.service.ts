@@ -1,13 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Owner } from '../models/owner';
+import { environment } from '../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root'
 })
 export class OwnerService {
 
-  private url = "http://localhost/serviciosWeb/petclinic/servicios.php";
+  private url = environment.API_URL;
   constructor(private http: HttpClient) { }
 
   selectOwners(){

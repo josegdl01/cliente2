@@ -8,6 +8,16 @@
         <label>APELLIDO: </label>
         <input type="text" name="lastName" required [(ngModel)]="vet.lastName">
     </div>
+    <div>
+        <label>ESPECIALIDAD: </label>
+        <select multiple name="specialties" required [(ngModel)]="vet.specialties" class="form-control">
+            @for(sp of specialtiesList; track $index){
+                <option [ngValue]="sp">
+                    {{sp.name}}
+                </option>
+            }
+        </select>
+    </div>
     <div style="visibility: hidden;">
         <label>ID: </label>
         <input type="number" name="id" required [(ngModel)]="vet.id">
@@ -15,7 +25,6 @@
 
     <div>
         <button type="submit">Enviar</button>
-        <button (click)="deleteVet(vet.id)">Borrar</button>
         <button routerLink="/vet">Cancelar</button>
     </div>
 </form>

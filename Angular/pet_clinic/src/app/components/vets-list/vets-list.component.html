@@ -3,13 +3,23 @@
     <thead>
         <th>ID</th>
         <th>NOMBRE</th>
+        <th>ESPECIALIDADES</th>
+        <th>EDITAR</th>
+        <th>BORRAR</th>
     </thead>
     
     <tbody>
         @for (vet of vets; track $index){
             <tr>
                 <td>{{vet.id}}</td>
-                <a routerLink="/add-vet/{{vet.id}}"><td>{{vet.firstName + " " + vet.lastName}}</td></a>
+                <td>{{vet.firstName + " " + vet.lastName}}</td>
+                <td>
+                    @for(sp of vet.specialties; track $index){
+                        {{sp.name}}
+                    }
+                </td>
+                <td><button routerLink="/add-vet/{{vet.id}}">Editar</button></td>
+                <td><button (click)="deleteVet(vet)">Borrar</button></td>
             </tr>
         }
     </tbody>

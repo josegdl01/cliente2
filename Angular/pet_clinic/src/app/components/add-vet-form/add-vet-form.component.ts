@@ -3,6 +3,8 @@ import { FormsModule } from '@angular/forms';
 import { VetService } from '../../services/vet.service';
 import { Vet } from '../../models/vet';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { Specialty } from '../../models/specialty';
+import { SpecialtyService } from '../../services/specialty.service';
 
 @Component({
   selector: 'app-add-vet-form',
@@ -16,12 +18,15 @@ export class AddVetFormComponent {
   public vet: Vet = {
     id: -1,
     firstName: "nombre",
-    lastName: "apellidos"
+    lastName: "apellidos",
+    specialties: []
   }
+
+  public specialtiesList: Specialty[] = [];
 
   public idVet: number;
 
-  constructor(private vetService: VetService, private ar: ActivatedRoute, private ruta: Router){
+  constructor(private vetService: VetService,private specService:SpecialtyService, private ar: ActivatedRoute, private ruta: Router){
     this.idVet = this.ar.snapshot.params["id"];
     
     if(this.idVet != -1){
@@ -30,6 +35,11 @@ export class AddVetFormComponent {
         error: err => console.error(err)
       });
     }
+
+     this.specService.selectSpecialties().subscribe({
+      next: spec => this.specialtiesList = spec,
+      error: err => console.error(err)
+     });
   }
 
   insertModVet(vet:Vet){
@@ -46,15 +56,5 @@ export class AddVetFormComponent {
     }
 
     this.ruta.navigate(["/vet"]);
-  }
-  
-  deleteVet(id: number){
-    if(confirm("Se borrará al veterinario "+this.vet.firstName+ " "+this.vet.lastName)){
-      this.vetService.deleteVet(id).subscribe({
-        next: res => console.log(res),
-        error: err => console.error(err)
-      });
-      this.ruta.navigate(["/vet"]);
-    }
   }
 }
