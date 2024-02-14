@@ -1,7 +1,10 @@
+import { Owner } from "./owner";
+import { PetType } from "./pet-type";
+
 export interface Pet {
     id: number,
     name: string,
     birth: Date,
-    ownerId: number,
-    typeId: number
+    owner: Owner,
+    type: PetType
 }

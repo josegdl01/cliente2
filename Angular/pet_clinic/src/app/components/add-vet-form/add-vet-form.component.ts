@@ -54,7 +54,6 @@ export class AddVetFormComponent {
         error: err => console.error(err)
       });
     }
-
     this.ruta.navigate(["/vet"]);
   }
 }

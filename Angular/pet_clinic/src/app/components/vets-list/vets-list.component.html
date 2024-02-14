@@ -1,27 +1,34 @@
-<h1 style="text-align: center;">VETS</h1>
-<table class="table">
-    <thead>
-        <th>ID</th>
-        <th>NOMBRE</th>
-        <th>ESPECIALIDADES</th>
-        <th>EDITAR</th>
-        <th>BORRAR</th>
-    </thead>
-    
-    <tbody>
-        @for (vet of vets; track $index){
-            <tr>
-                <td>{{vet.id}}</td>
-                <td>{{vet.firstName + " " + vet.lastName}}</td>
-                <td>
-                    @for(sp of vet.specialties; track $index){
-                        {{sp.name}}
-                    }
-                </td>
-                <td><button routerLink="/add-vet/{{vet.id}}">Editar</button></td>
-                <td><button (click)="deleteVet(vet)">Borrar</button></td>
-            </tr>
-        }
-    </tbody>
-    <button routerLink="/add-vet/-1">Add Vet</button>
-</table>
+<div class="container">
+    <h1 style="text-align: center;">VETS</h1>
+    <nav class="nav">
+        <button routerLink="/owner">Owners</button>
+        <button>Pets</button>
+        <button routerLink="/vet">Vets</button>
+    </nav>
+    <table class="table">
+        <thead>
+            <th>ID</th>
+            <th>NOMBRE</th>
+            <th>ESPECIALIDADES</th>
+            <th>EDITAR</th>
+            <th>BORRAR</th>
+        </thead>
+        
+        <tbody>
+            @for (vet of vets; track $index){
+                <tr>
+                    <td>{{vet.id}}</td>
+                    <td>{{vet.firstName + " " + vet.lastName}}</td>
+                    <td>
+                        @for(sp of vet.specialties; track $index){
+                            {{sp.name}}
+                        }
+                    </td>
+                    <td><button routerLink="/add-vet/{{vet.id}}">Editar</button></td>
+                    <td><button (click)="deleteVet(vet)">Borrar</button></td>
+                </tr>
+            }
+        </tbody>
+        <button routerLink="/add-vet/-1">Add Vet</button>
+    </table>
+</div>

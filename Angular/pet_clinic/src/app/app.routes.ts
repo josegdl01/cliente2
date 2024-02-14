@@ -5,6 +5,8 @@ import { HomeComponent } from './components/home/home.component';
 import { AddOwnerFormComponent } from './components/add-owner-form/add-owner-form.component';
 import { VetsListComponent } from './components/vets-list/vets-list.component';
 import { AddVetFormComponent } from './components/add-vet-form/add-vet-form.component';
+import { PetTypeComponent } from './components/pet-type/pet-type.component';
+import { AddTypeComponent } from './components/add-type/add-type.component';
 
 export const routes: Routes = 
 [
@@ -31,5 +33,13 @@ export const routes: Routes =
     {
         path:"add-vet/:id",
         component:AddVetFormComponent
+    },
+    {
+        path:"type",
+        component:PetTypeComponent
+    },
+    {
+        path:"add-type/:id",
+        component:AddTypeComponent
     }
 ];

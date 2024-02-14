@@ -1,0 +1,19 @@
+
+<div>
+    <table class="table">
+        <thead>
+            <th>NOMBRE</th>
+        </thead>
+        <tbody>
+            @for(type of types; track $index){
+                <tr>
+                    <td>{{type.name}}</td>
+                    <td><button routerLink="/add-type/{{type.id}}">Editar</button></td>
+                    <td><button>Borrar</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <button routerLink="/add-type/-1">Add Type</button>
+</div>
