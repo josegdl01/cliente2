@@ -1,6 +1,6 @@
-<!-- <div>
-    <form #typeForm="ngForm" ngSubmit="addModType(typeForm.value)">
-        <div>
+<div>
+    <form #typeForm="ngForm" (ngSubmit)="addModType(typeForm.value)">
+        <div style="visibility: hidden;">
             <label>ID: </label>
             <input type="number" name="id" required [(ngModel)]="type.id">
         </div>
@@ -8,6 +8,8 @@
         <div>
             <label>NOMBRE: </label>
             <input type="text" name="name" required [(ngModel)]="type.name">
+            <span><button type="submit">Add</button></span>
         </div>
+
     </form>
-</div> -->
+</div>

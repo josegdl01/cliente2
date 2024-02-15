@@ -7,13 +7,16 @@
         <tbody>
             @for(type of types; track $index){
                 <tr>
-                    <td>{{type.name}}</td>
-                    <td><button routerLink="/add-type/{{type.id}}">Editar</button></td>
-                    <td><button>Borrar</button></td>
+                    <td><input type="text" readonly value="{{type.name}}"></td>
+                    <td><button>Editar</button></td>
+                    <td><button (click)="deleteType(type)">Borrar</button></td>
                 </tr>
             }
         </tbody>
     </table>
 
-    <button routerLink="/add-type/-1">Add Type</button>
+    <button (click)="changeShowForm()">Add Type</button>
+    @if(showForm == true){
+        <app-add-type (pafuera)="addType($event)"></app-add-type>
+    }
 </div>

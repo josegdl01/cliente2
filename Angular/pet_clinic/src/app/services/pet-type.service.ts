@@ -23,12 +23,33 @@ export class PetTypeService {
     return this.http.post<PetType[]>(this.url, param);
    }
 
-   selectTypeId(id:number){
+   insertType(type: PetType){
     let param = JSON.stringify({
-      accion: "ListarPettypes"
+      accion: "AnadePettype",
+      pettype:type
     });
-    console.log("SELECT TYPE BY ID RECIBE: ", param);
+    console.log("INSERT TYPE RECIBE: ", param);
 
     return this.http.post<PetType>(this.url, param);
+   }
+
+   deleteType(type: PetType){
+    let param = JSON.stringify({
+      accion: "BorraPettype",
+      id:type.id
+    });
+    console.log("DELETE TYPE RECIBE: ", param);
+
+    return this.http.post<any>(this.url, param);
+   }
+
+   modType(type: PetType){
+    let param = JSON.stringify({
+      accion: "ModificaPettype",
+      pettype: type
+    });
+    console.log("MODIFICAR TYPE RECIBE: ", param);
+
+    return this.http.post<any>(this.url, param);
    }
 }

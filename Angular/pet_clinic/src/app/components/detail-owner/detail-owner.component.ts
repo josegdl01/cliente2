@@ -81,5 +81,7 @@ export class DetailOwnerComponent {
     });
 
     this.showForm();
+
+    this.ruta.navigate(["/owner"]);
   }
 }

@@ -37,9 +37,5 @@ export const routes: Routes =
     {
         path:"type",
         component:PetTypeComponent
-    },
-    {
-        path:"add-type/:id",
-        component:AddTypeComponent
     }
 ];
