@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { PetType } from '../../models/pet-type';
 import { PetTypeService } from '../../services/pet-type.service';
@@ -11,13 +11,17 @@ import { PetTypeService } from '../../services/pet-type.service';
   styleUrl: './add-type.component.sass'
 })
 export class AddTypeComponent {
-  public type: PetType = { id: -1, name: "" };
   @Output()
   public pafuera = new EventEmitter<PetType>();
+  
+  @Input()
+  public type: PetType = <PetType>{};
 
+
+  
   constructor(private typeService: PetTypeService) {
   }
-
+  
   addModType(type: PetType) {
     console.log(type);
     this.typeService.insertType(type).subscribe({

@@ -7,8 +7,8 @@
         <tbody>
             @for(type of types; track $index){
                 <tr>
-                    <td><input type="text" readonly value="{{type.name}}"></td>
-                    <td><button>Editar</button></td>
+                    <td>{{type.name}}</td>
+                    <td><button (click)="changeShowForm()">Editar</button></td>
                     <td><button (click)="deleteType(type)">Borrar</button></td>
                 </tr>
             }

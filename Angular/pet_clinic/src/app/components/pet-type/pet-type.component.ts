@@ -15,7 +15,6 @@ import { AddTypeComponent } from '../add-type/add-type.component';
 export class PetTypeComponent {
 
   public types: PetType[] = [];
-
   public showForm:boolean = false;
 
   constructor(private typeService:PetTypeService) {
@@ -29,13 +28,17 @@ export class PetTypeComponent {
     this.showForm = !this.showForm;
   }
 
+  changeEditForm(){
+    this.showForm = !this.showForm;
+  }
+
   addType(event: PetType){
     this.types.push(event);
     this.changeShowForm();
   }
 
   deleteType(type: PetType){
-    if(confirm("Se borrará eñ tipo: " +type.name)){
+    if(confirm("Se borrará el tipo: " +type.name)){
       this.typeService.deleteType(type).subscribe({
         next: result => {
           let re = <{result: string}> result;

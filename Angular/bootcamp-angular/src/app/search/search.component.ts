@@ -11,10 +11,13 @@ import { FormsModule } from '@angular/forms';
 export class SearchComponent {
   public query: string;
   public result: string;
+
   @Input()
   public labelButton: string;
+
   @Input()
   public placeholder: string;
+  
   @Output()
   searchEvent = new EventEmitter();
 
