@@ -2,12 +2,12 @@
     <form #typeForm="ngForm" (ngSubmit)="addModType(typeForm.value)">
         <div style="visibility: hidden;">
             <label>ID: </label>
-            <input type="number" name="id" required [(ngModel)]="type.id">
+            <input type="number" name="id" readonly required [(ngModel)]="typeRecibido.id">
         </div>
         
         <div>
             <label>NOMBRE: </label>
-            <input type="text" name="name" required [(ngModel)]="type.name">
+            <input type="text" name="name" required [(ngModel)]="typeRecibido.name">
             <span><button type="submit">Save</button></span>
         </div>
 

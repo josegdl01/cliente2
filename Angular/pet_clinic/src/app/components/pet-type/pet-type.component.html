@@ -8,7 +8,7 @@
             @for(type of types; track $index){
                 <tr>
                     <td>{{type.name}}</td>
-                    <td><button (click)="changeShowForm()">Editar</button></td>
+                    <td><button (click)="enviarPetType(type)">Editar</button></td>
                     <td><button (click)="deleteType(type)">Borrar</button></td>
                 </tr>
             }
@@ -17,6 +17,6 @@
 
     <button (click)="changeShowForm()">Add Type</button>
     @if(showForm == true){
-        <app-add-type (pafuera)="addType($event)"></app-add-type>
+        <app-add-type [typeRecibido]="emitirType"  (pafuera2)="modType()" (pafuera)="addType($event)"></app-add-type>
     }
 </div>

@@ -7,11 +7,12 @@ import { PetService } from '../../services/pet.service';
 import { FormsModule } from '@angular/forms';
 import { PetType } from '../../models/pet-type';
 import { PetTypeService } from '../../services/pet-type.service';
+import { VisitComponent } from '../visit/visit.component';
 
 @Component({
   selector: 'app-detail-owner',
   standalone: true,
-  imports: [RouterLink, FormsModule],
+  imports: [RouterLink, FormsModule, VisitComponent],
   templateUrl: './detail-owner.component.html',
   styleUrl: './detail-owner.component.sass'
 })

@@ -1,0 +1,24 @@
+<div class="container">
+    <table class="table">
+        <thead>
+            <th>ID:</th>
+            <th>NAME:</th>
+        </thead>
+
+        <tbody>
+            @for(spec of specs; track $index){
+                <tr>
+                    <td>{{spec.id}}</td>
+                    <td>{{spec.name}}</td>
+                    <td><button>Edit</button></td>
+                    <td><button>Delete</button></td>
+                </tr>
+            }
+        </tbody>
+        <button (click)="changeShowForm()">Add Specialty</button>
+    </table>
+
+    @if(showForm){
+        <app-add-spec></app-add-spec>
+    }
+</div>

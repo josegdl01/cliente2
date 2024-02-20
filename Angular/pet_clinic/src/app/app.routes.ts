@@ -7,6 +7,7 @@ import { VetsListComponent } from './components/vets-list/vets-list.component';
 import { AddVetFormComponent } from './components/add-vet-form/add-vet-form.component';
 import { PetTypeComponent } from './components/pet-type/pet-type.component';
 import { AddTypeComponent } from './components/add-type/add-type.component';
+import { SpecialtyListComponent } from './components/specialty-list/specialty-list.component';
 
 export const routes: Routes = 
 [
@@ -37,5 +38,9 @@ export const routes: Routes =
     {
         path:"type",
         component:PetTypeComponent
+    },
+    {
+        path:"specialty",
+        component:SpecialtyListComponent
     }
 ];

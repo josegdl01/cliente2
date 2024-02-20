@@ -1,0 +1,15 @@
+<form>
+    <div style="visibility: hidden;">
+        <label>
+            ID:
+        </label>
+        <input type="number" required [(ngModel)]="spec.id" readonly >
+    </div>
+
+    <label>
+        NOMBRE:
+    </label>
+    <input type="text" required [(ngModel)]="spec.name" >
+
+    <button type="submit">Add</button>
+</form>

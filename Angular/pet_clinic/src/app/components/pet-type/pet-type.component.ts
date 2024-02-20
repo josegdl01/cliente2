@@ -16,6 +16,8 @@ export class PetTypeComponent {
 
   public types: PetType[] = [];
   public showForm:boolean = false;
+  
+  public emitirType: PetType = <PetType>{};
 
   constructor(private typeService:PetTypeService) {
     this.typeService.selectTypes().subscribe({
@@ -37,6 +39,10 @@ export class PetTypeComponent {
     this.changeShowForm();
   }
 
+  modType(){
+    this.changeShowForm();
+  }
+
   deleteType(type: PetType){
     if(confirm("Se borrará el tipo: " +type.name)){
       this.typeService.deleteType(type).subscribe({
@@ -49,5 +55,10 @@ export class PetTypeComponent {
         error : err => console.error(err)
       });
     }
+  }
+
+  enviarPetType(type: PetType){
+    this.emitirType = type;
+    this.changeShowForm();
   }
 }

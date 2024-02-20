@@ -12,15 +12,15 @@
         <h2>Phone: {{owner.telephone}}</h2>
         <h2 style="visibility: hidden;">Id: {{owner.pets}}</h2>
     </div>
-    <nav>
-        <button routerLink="/owner">Go Back</button>
-        <button routerLink="/add-owner/{{owner.id}}">Edit</button>
-        @if(owner.pets == null){
-            <button (click)="deleteOwner(owner.id)">Delete Owner</button>
-        }
-        <button (click)="showForm()">{{addButtonText}}</button>
-    </nav>
 </div>
+<nav>
+    <button routerLink="/owner">Go Back</button>
+    <button routerLink="/add-owner/{{owner.id}}">Edit</button>
+    @if(owner.pets == null){
+        <button (click)="deleteOwner(owner.id)">Delete Owner</button>
+    }
+    <button (click)="showForm()">{{addButtonText}}</button>
+</nav>
 @if(banderaForm == true){
     <div>
         <form #petForm="ngForm" (ngSubmit)="addPet(petForm.value)">
@@ -55,4 +55,7 @@
             <button>Add</button>
         </form>
     </div>
+}
+@if(owner.pets != null && owner.pets.length > 0){
+    <app-visit></app-visit>
 }

@@ -13,8 +13,15 @@ import { PetTypeService } from '../../services/pet-type.service';
 export class AddTypeComponent {
   @Output()
   public pafuera = new EventEmitter<PetType>();
+
+  @Output()
+  public pafuera2 = new EventEmitter<PetType>();
   
   @Input()
+  public typeRecibido: PetType = <PetType>{
+
+  };
+
   public type: PetType = <PetType>{};
 
 
@@ -24,12 +31,24 @@ export class AddTypeComponent {
   
   addModType(type: PetType) {
     console.log(type);
-    this.typeService.insertType(type).subscribe({
-      next: result => {
-        console.log(result);
-        this.pafuera.emit(result)
-      },
-      error: err => console.error(err)
-    });
+    let copyType: PetType;
+    if(type.id){
+      this.typeService.modType(type).subscribe({
+        next: result => {
+          console.log(result);
+          copyType = type;
+          this.pafuera2.emit()
+        },
+        error: err => console.error(err)
+      });
+    } else {
+      this.typeService.insertType(type).subscribe({
+        next: result => {
+          console.log(result);
+          this.pafuera.emit(result);
+        },
+        error: err => console.error(err)
+      });
+    }
   }
 }

@@ -19,4 +19,14 @@ export class SpecialtyService {
 
     return this.http.post<Specialty[]>(this.url, param);
   }
+
+  insertSpecialty(spec: Specialty){
+    let param = JSON.stringify({
+      accion: "AnadeSpecialty",
+      specialty: spec
+    });
+    console.log("INSERT SPECIALTY RECIBE: ", param);
+
+    return this.http.post<any>(this.url, param);
+  }
 }
