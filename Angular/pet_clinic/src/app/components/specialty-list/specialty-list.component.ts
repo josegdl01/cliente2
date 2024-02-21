@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { SpecialtyService } from '../../services/specialty.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Specialty } from '../../models/specialty';
@@ -17,6 +17,8 @@ export class SpecialtyListComponent {
 
   public showForm: boolean = false;
 
+  public specOut = <Specialty>{};
+
   constructor(private specService: SpecialtyService,
               private ruta: Router,
               private ar: ActivatedRoute) {
@@ -28,6 +30,37 @@ export class SpecialtyListComponent {
   }
 
   changeShowForm(){
-    this.showForm = !this.showForm;
+    if(this.showForm){
+      this.showForm = !this.showForm;
+      this.specOut = <Specialty>{};
+    } else {
+      this.showForm = !this.showForm;
+    }
+  }
+
+  addSpec(spec: Specialty){
+    this.specs.push(spec);
+    this.changeShowForm();
+  }
+
+  deleteVaina(spec: Specialty){
+    this.specService.deleteSpecialty(spec).subscribe({
+      next: res => {
+        let result = <String> res;
+        if(result = "OK"){
+          this.specs = this.specs.filter( element => element != spec)
+        }
+      },
+      error: err => console.log(err)
+    });
+  }
+
+  sendSpec(spec: Specialty){
+    this.specOut = spec;
+    this.changeShowForm();
+  }
+
+  modSpec(spec: Specialty){
+    this.changeShowForm();
   }
 }

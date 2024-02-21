@@ -4,6 +4,7 @@ import { PetTypeService } from '../../services/pet-type.service';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AddTypeComponent } from '../add-type/add-type.component';
+import { Specialty } from '../../models/specialty';
 
 @Component({
   selector: 'app-pet-type',
@@ -27,11 +28,17 @@ export class PetTypeComponent {
   }
 
   changeShowForm(){
-    this.showForm = !this.showForm;
+    if(this.showForm){
+      this.emitirType = <Specialty>{};
+      this.showForm = !this.showForm;
+    } else {
+      this.showForm = !this.showForm;
+    }
   }
 
   changeEditForm(){
     this.showForm = !this.showForm;
+    this.emitirType = <PetType> {};
   }
 
   addType(event: PetType){

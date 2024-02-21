@@ -1,15 +1,15 @@
-<form>
+<form #formSpec="ngForm" (ngSubmit)="insertSpec(formSpec.value)">
     <div style="visibility: hidden;">
         <label>
             ID:
         </label>
-        <input type="number" required [(ngModel)]="spec.id" readonly >
+        <input type="number" name="id" required [(ngModel)]="specRecibido.id" readonly >
     </div>
 
     <label>
         NOMBRE:
     </label>
-    <input type="text" required [(ngModel)]="spec.name" >
+    <input type="text" name="name" required [(ngModel)]="specRecibido.name" >
 
     <button type="submit">Add</button>
 </form>

@@ -10,8 +10,8 @@
                 <tr>
                     <td>{{spec.id}}</td>
                     <td>{{spec.name}}</td>
-                    <td><button>Edit</button></td>
-                    <td><button>Delete</button></td>
+                    <td><button (click)="sendSpec(spec)">Edit</button></td>
+                    <td><button (click)="deleteVaina(spec)">Delete</button></td>
                 </tr>
             }
         </tbody>
@@ -19,6 +19,6 @@
     </table>
 
     @if(showForm){
-        <app-add-spec></app-add-spec>
+        <app-add-spec [specRecibido]="specOut" (pafuera)="addSpec($event)" (pafuera2)="modSpec($event)"></app-add-spec>
     }
 </div>

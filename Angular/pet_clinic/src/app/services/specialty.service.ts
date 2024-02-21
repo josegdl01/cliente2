@@ -29,4 +29,24 @@ export class SpecialtyService {
 
     return this.http.post<any>(this.url, param);
   }
+
+  deleteSpecialty(spec: Specialty){
+    let param = JSON.stringify({
+      accion: "BorraSpecialty",
+      id: spec.id
+    });
+
+    console.log("DELETE SPECIALTY RECIBE: ", param);
+
+    return this.http.post<any>(this.url, param);
+  }
+
+  modSpecialty(spec: Specialty){
+    let param = JSON.stringify({
+      accion: "ModificaSpecialty",
+      specialty: spec
+    });
+
+    return this.http.post<Specialty>(this.url, param);
+  }
 }

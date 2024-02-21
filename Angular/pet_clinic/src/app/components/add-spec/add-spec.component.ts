@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Specialty } from '../../models/specialty';
 import { SpecialtyService } from '../../services/specialty.service';
@@ -12,19 +12,31 @@ import { SpecialtyService } from '../../services/specialty.service';
 })
 export class AddSpecComponent {
 
-  public spec: Specialty = <Specialty>{};
-
   @Output() pafuera = new EventEmitter();
+
+  @Input() specRecibido:Specialty = <Specialty> {};
+
+  @Output() pafuera2 = new EventEmitter();
 
   constructor(private specServ: SpecialtyService){
 
   }
 
   insertSpec(spec : Specialty){
-    this.specServ.insertSpecialty(spec).subscribe({
-      next: res => console.log(res),
-      error: err => console.error(err)
-    })
+    if(this.specRecibido.id == null){
+      this.specServ.insertSpecialty(this.specRecibido).subscribe({
+        next: res => this.pafuera.emit(res),
+        error: err => console.error(err)
+      })
+    } else {
+      this.specServ.modSpecialty(this.specRecibido).subscribe({
+        next: res => {
+          this.pafuera2.emit(res)
+        },
+        error: err => console.error(err)
+      })
+    }
+    
   }
 
 }
