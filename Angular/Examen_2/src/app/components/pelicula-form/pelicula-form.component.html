@@ -1,0 +1,42 @@
+<form #peliForm="ngForm" (ngSubmit)="insertModPeli(peliForm.value)">
+    <div style="visibility: hidden;">
+        <label>ID:</label>
+        <input type="number" name="id" required [(ngModel)]="peli.id">
+    </div>
+    <div>
+        <label>Nombre:</label>
+        <input type="text" name="nombre" required [(ngModel)]="peli.nombre">
+    </div>
+    <div>
+        <label>Fecha de Salida:</label>
+        <input type="date" name="fecha" required [(ngModel)]="peli.fecha">
+    </div>
+    <div>
+        <label>Intérpretes:</label>
+        <select multiple name="interpretes" [(ngModel)]="peli.interpretes">
+            @for(int of ints; track $index){
+                <option [ngValue]="int">
+                    {{int.nombre}}
+                </option>
+            }
+        </select>
+    </div>
+    <div>
+        <label>Género: </label>
+        <select name="genero" required [(ngModel)]="peli.genero">
+            @for(gen of generos; track $index){
+                <option [ngValue]="gen">
+                    {{gen.nombre}}
+                </option>
+            }
+        </select>
+    </div>
+
+    <div>
+        <label>Sinopsis:</label>
+        <textarea name="sinopsis" required [(ngModel)]="peli.sinopsis"></textarea>
+    </div>
+
+    <button type="submit" [disabled]="!peliForm.valid">{{textoBoton}}</button>
+    <button type="button" (click)="volver()">Volver</button></form>
+

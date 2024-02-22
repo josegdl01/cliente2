@@ -1,0 +1,20 @@
+<table>
+    <thead>
+        <th>Nombre</th>
+        <th>Apellidos</th>
+        <th>Fecha de nacimiento</th>
+    </thead>
+
+    <tbody>
+        @for(int of interpretes; track $index){
+            <tr>
+                <td><a routerLink="/interprete-form/{{int.id}}">{{int.nombre}}</a></td>
+                <td>{{int.apellidos}}</td>
+                <td>{{int.fecha_nacimiento | date}}</td>
+                <td><button (click)="borrarInterprete(int)">Borrar</button></td>
+            </tr>
+        }
+    </tbody>
+    <button routerLink="/">Volver</button>
+    <button routerLink="/interprete-form/-1">Añadir Interprete</button>
+</table>

@@ -1,0 +1,21 @@
+<table>
+    <thead>
+        <th>Nombre</th>
+        <th>Fecha de salida</th>
+        <th>Género</th>
+    </thead>
+
+    <tbody>
+        @for(peli of pelis; track $index){
+            <tr>
+                <td><a routerLink="/pelicula-form/{{peli.id}}">{{peli.nombre}}</a></td>
+                <td>{{peli.fecha | date}}</td>
+                <td>{{peli.genero.nombre}}</td>
+                <td><button (click)="borrarPeli(peli)">Borrar</button></td>
+            </tr>
+        }
+    </tbody>
+
+    <button routerLink="/">Volver</button>
+    <button routerLink="/pelicula-form/-1">Añadir Pelicula</button>
+</table>

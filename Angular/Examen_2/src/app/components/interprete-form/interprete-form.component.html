@@ -1,0 +1,25 @@
+<form #intForm="ngForm" (ngSubmit)="insertModInterprete(intForm.value)">
+    <div style="visibility: hidden;">
+        <label>ID:</label>
+        <input type="number" name="id" required [(ngModel)]="interprete.id">
+    </div>
+    <div>
+        <label>Nombre:</label>
+        <input type="text" name="nombre" required [(ngModel)]="interprete.nombre">
+    </div>
+    <div>
+        <label>Apellidos:</label>
+        <input type="text" name="apellidos" required [(ngModel)]="interprete.apellidos">
+    </div>
+    <div>
+        <label>Fecha de nacimiento:</label>
+        <input type="date" name="fecha_nacimiento" required [(ngModel)]="interprete.fecha_nacimiento">
+    </div>
+    <div>
+        <label>Biografia:</label>
+        <textarea name="biografia" required [(ngModel)]="interprete.biografia"></textarea>
+    </div>
+
+    <button type="submit" [disabled]="!intForm.valid">{{textoBoton}}</button>
+    <button type="button" (click)="volver()">Volver</button>
+</form>
