@@ -1,0 +1,19 @@
+<div class="container">
+    <table class="table">
+        <thead>
+            <th>DNI</th>
+            <th>NOMBRE</th>
+            <th>APELLIDOS</th>
+        </thead>
+
+        <tbody>
+            @for(persona of personas; track $index){
+                <tr>
+                    <td>{{persona.DNI}}</td>
+                    <td>{{persona.NOMBRE}}</td>
+                    <td>{{persona.APELLIDOS}}</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

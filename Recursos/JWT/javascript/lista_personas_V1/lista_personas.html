@@ -1,0 +1,554 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8"/>
+    <title>Ejercicio Listado Personas. AJAX</title>
+    <script type="text/javascript">
+		
+			//  Lo primero. Comprobamos que existe el JWT (y tiene el formato válido):
+			if ((!localStorage.JWT) || ((localStorage.JWT) && (localStorage.JWT.split(".").length != 3))) {
+				limpiarEIrse();
+			}
+			function limpiarEIrse() {
+				localStorage.JWT = "";  // Borramos lo que pudiera haber del JWT.
+				localStorage.nombreUsuario = "";  //  y también el nombre.
+				alert("Login no realizado, por favor haz login");
+				location.href="login.html";  //  Redireccionamos, nos vamos!!!
+			}
+			
+			
+			
+		
+			function Crea_Fila(aCol) {
+      	var fila =  document.createElement("tr");
+      	var col; var cont;
+      	for (var i in aCol) {
+      		col = document.createElement("td");
+      		cont = document.createTextNode(aCol[i]);
+      		col.appendChild(cont);
+      		fila.appendChild(col);
+      	}
+      	return fila;
+      }
+      
+      function LlenaTabla(aTabla, cuerpoTabla) {
+				
+      	var fila;
+      	for (var i=0; i < aTabla.length; i++) {
+      		fila = Crea_Fila(aTabla[i]);
+      		cuerpoTabla.appendChild(fila);
+      	}
+      }
+			
+			
+			
+			
+			const cargaContenido = (url, metodo, funcion, parametros)=>{
+				var cab = {
+					headers: {
+						'Content-Type': 'application/json',
+						'Authorization': 'Bearer ' + localStorage.JWT
+					},
+					method: metodo,
+					body: JSON.stringify(parametros)    
+				};
+				
+				console.log("cab: ", cab);
+				
+				fetch(url, cab)
+					.then(r => r.json())
+				//	.then(datos => console.log(datos))
+					.then(datos => funcion(datos))
+					.catch( e => console.error('error al pedir los datos. ', e));
+			}
+			
+			
+
+      function MuestraPersonas(res) {
+			//	var res = JSON.parse(res);
+				if ((res.sesion) && (res.sesion == "NO")) {
+					//  No se ha validado el JWT, nos vamos al login:
+					limpiarEIrse();
+				}
+				document.getElementById("filas_tabla").innerHTML = "";
+				LlenaTabla(res, document.getElementById("filas_tabla"));
+      }
+      
+      function disparoAjax() {
+				var url = "servidor.php";
+				var pa = {
+					servicio: "insertar",
+					dni: document.querySelector("#dni").value,
+					nombre: document.querySelector("#nombre").value,
+					apellidos: document.querySelector("#apellidos").value
+				};
+			//	console.log(pa);
+        cargaContenido(url, "POST", MuestraPersonas, pa) 	
+      }
+
+      window.onload = function() {
+				cargarTabla();
+        document.getElementById("btAnade").onclick = disparoAjax;
+				document.getElementById("btCerrarSesion").onclick = cerrarSesion;
+      }
+			
+			function cargarTabla() {
+				var url = "servidor.php";
+				var pa = {
+					servicio: "listar"
+				};
+        cargaContenido(url, "POST", MuestraPersonas, pa);
+			}
+			
+			function cerrarSesion(){
+				if (confirm("¿Deseas cerrar sesión?")) {
+					localStorage.JWT = "";  // Borramos lo que pudiera haber del JWT.
+					localStorage.nombreUsuario = "";  //  y también el nombre.
+					location.href="login.html";  //  Redireccionamos, nos vamos!!!
+				}
+			}
+
+    </script>
+  </head>
+  <body>
+    <h1>Registro de Usuarios</h1>
+		<p style="text-align: center;">
+			<input type="button" value="Cerrar Sesión" id="btCerrarSesion" />
+		</p>
+
+    <form>
+      <label for="dni">DNI:</label>
+      <input type="text" id="dni" name="dni" value="27473339T" />
+      <span id="infoDNI"> </span>
+      <br/>
+      <label for="nombre">NOMBRE:</label>
+      <input type="text" id="nombre" name="nombre" value="Marco Elio" />
+      <br/>
+      <label for="apellidos">APELLIDOS:</label>
+      <input type="text" id="apellidos" name="apellidos" value="García Gomariz" />
+      <br/>
+
+      <br/>
+     
+      <table id="tabla_personas" border="1">
+        <tr>
+          <th>ID</th>
+          <th>DNI</th>
+          <th>NOMBRE</th>
+          <th>APELLIDOS</th>
+        </tr>
+        
+        <tbody id="filas_tabla">
+        
+        </tbody>
+      </table>
+
+      <br/>
+      <br/>
+      <input type="button" value="AÑADIR" id="btAnade" />
+    </form>
+
+  </body>
+</html>
+
+<!--
+select h.*, (Select COUNT(*) from mesh_points p WHERE p.id_hold = h.id) as pointcount FROM holds h
+
+Primer paso:
+
+SELECT * FROM holds h INNER JOIN contact_surface_hold csh ON(csh.id_hold = h.id)
+
+// Procedimiento almacenado: holds_contactSurface()
+//  Vista: 
+CREATE VIEW holds_contactSurface AS 
+SELECT h.id, csh.* FROM holds h INNER JOIN contact_surface_hold csh ON(csh.id_hold = h.id)
+
+CREATE VIEW holds_contactSurface AS 
+SELECT h.id, h.name, h.id_grip,  h.id_size, h.id_manufacturer, h.id_raw_material_hold, h.record_date, h.update_date, h.nimages, h.id_mesh_state, h.mesh, 
+csh.name name_csh, csh.id_hold_type, csh.id_hold_shape, csh.id_contact_surface_deep, csh.id_contact_surface_widh
+ FROM holds h INNER JOIN contact_surface_hold csh ON(csh.id_hold = h.id)
+
+
+Segundo paso:
+
+SELECT h.*, csh.*, (Select COUNT(*) from mesh_points mp WHERE mp.id_contact_surface_hold = csh.id) as pointcount
+ FROM holds h INNER JOIN contact_surface_hold csh ON(csh.id_hold = h.id)
+
+
+SELECT h.*, csh.*, csw.name as cswN, csd.name as csdN, (Select COUNT(*) from mesh_points mp WHERE mp.id_contact_surface_hold = csh.id) as pointcount
+ FROM holds h INNER JOIN contact_surface_hold csh ON(csh.id_hold = h.id) 
+							INNER JOIN contact_surface_widh csw ON(csw.id = csh.id_contact_surface_widh)
+							INNER JOIN contact_surface_deep csd ON(csd.id = csh.id_contact_surface_deep)
+
+
+
+SELECT h.*, csh.* FROM holds h INNER JOIN contact_surface_hold csh ON(csh.id_hold = h.id)
+
+
+
+//  Esta de abajo. NO:
+SELECT h.*, (Select csh.* from contact_surface_hold csh Where (csh.id_hold = h.id)) as otro, 
+		(Select COUNT(*) from mesh_points mp WHERE mp.id_contact_surface_hold = csh.id) as pointcount
+ FROM holds h
+
+
+
+//  INSERT:
+  @Context ServletContext servletContext;
+  @Context UriInfo uri;
+  @POST
+  @Path("register")
+  @Produces(MediaType.APPLICATION_JSON)
+  public String reg(String entity, @Context ServletContext ctx, @Context HttpServletRequest request, @QueryParam("path") String requestedPath) throws JsonProcessingException {
+  //  Users u = mapper.readValue(entity, Users.class);
+    UserAddMod uam = mapper.readValue(entity, UserAddMod.class);
+    
+    DTO dto = new DTO(); 
+    //  Insertamos primero al usuario:
+    try{
+      super.createID(uam.getUser());  // createID para que actualice los datos y obtengamos el nuevo id. 
+    }catch(Exception e){
+      dto.put("register", false);
+      dto.put("user", false);
+      dto.put("Error", e.getMessage());
+      return mapper.writeValueAsString(dto);
+    }
+ 
+    //  Ahora los roles de ese usuario en el proyecto:
+    String sql;
+    try{
+      for(ProyectRoleTypes p : uam.getProyectRoleTypesCollection()){
+        sql = "INSERT INTO users_project_role_types VALUES (?1, ?2)";
+        em.createNativeQuery(sql).
+          setParameter(1, uam.getUser().getId()).
+          setParameter(2, p.getId()).
+          executeUpdate();
+      }
+    }catch(Exception e){
+      //  Ha habido error, ¿¿quitar, eliminar al usuario insertado??:
+    //  super.remove(u);  //  No tengo claro que se deba borrar al usuario si ha fallado la inserción de sus roles en el proyecto.
+      dto.put("register", false);
+      dto.put("roles", false);
+      dto.put("error", e.getMessage());
+      return mapper.writeValueAsString(dto);
+    }
+    
+    //  Y por último las Redes Sociales:
+    try{
+      for(RrssUsers rrss : uam.getRrssUsersCollection()){
+        sql = "INSERT INTO rrss_users(id_user, link, info) VALUES (?1, ?2, ?3)";
+        em.createNativeQuery(sql).
+          setParameter(1, uam.getUser().getId()).
+          setParameter(2, rrss.getLink()).
+          setParameter(3, rrss.getInfo()).      
+          executeUpdate();
+      }
+    }catch(Exception e){
+      dto.put("register", false);
+      dto.put("rrss", false);
+      dto.put("error", e.getMessage());
+      return mapper.writeValueAsString(dto);
+    }
+    
+    //  ENVIAMOS EL CORREO PARA QUE VERIFIQUE SU EMAIL:
+    
+    //  Generamos el código para el link:
+    String strCode = generateCodeLink(uam.getUser().getId().toString());
+   //  Hacemos el insert en la tabla: Generate_key
+    sql = "INSERT INTO generate_key(id_user, email, code) VALUES (?1, ?2, ?3)";
+    em.createNativeQuery(sql).
+      setParameter(1, uam.getUser().getId()).
+      setParameter(2, uam.getUser().getEmail()).
+      setParameter(3, strCode).      
+      executeUpdate();
+
+    
+    //  AQUÍ VAMOS A ENVIAR UN CORREO:
+    
+    String path = requestedPath == null ? "/" : requestedPath;
+    //  dto.put("requestedPath", requestedPath);
+    
+    String actualPath = servletContext.getRealPath(path);
+    //  dto.put("actualPath", actualPath);
+    
+    String Filepath = actualPath + "templates/confirmEmail.html";  
+    //  dto.put("Filepath", Filepath);
+    
+
+    //  Obtenermos la url para el servicio para confirmar el email:
+    String url = request.getRequestURL().toString();
+    
+    // le quitamos la parte final ("/register") a url:
+    url = url.replace("/register","");
+    //  dto.put("url", url);
+    
+    boolean envioEmail = false;
+    try {
+      envioEmail = sendEmailGMAIL(uam.getUser().getId().toString(), uam.getUser().getEmail(), strCode, Filepath, url);
+      //  String envioEmail =  sendEmailGMAIL(uam.getUser().getId().toString(), uam.getUser().getEmail(), strCode, Filepath, url);
+    } catch (Exception ex) {
+      Logger.getLogger(loginUser.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    
+    dto.put("email", envioEmail);
+    
+    //  No ha habido ningún error (estupendo):
+    dto.put("register", true);
+    return mapper.writeValueAsString(dto);
+    
+  }
+  
+  
+  
+  @GET
+  @Path("verifymail/{code}")
+  @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_XHTML_XML})
+  public Response verifyMail(@PathParam("code") String code) throws JsonProcessingException { 
+    
+    //  Recogemos el código (code) y verificamos que exista en la tabla Generate_key
+    //   Si es así verificamos el email del usuario en la tabla users 
+    //   y eliminamos registro en la tabla Generate_key
+    
+    //  Por defecto establecemos que todo va a ir bien:
+    String sUrl = "../templates/emailVerified.html";
+    
+    Query q = em.createNativeQuery("SELECT * FROM generate_key WHERE code = ?1", Generate_key.class);
+    q.setParameter(1, code);
+    List<Generate_key> res = q.getResultList();
+    
+    if (res.size() == 1) {
+      Generate_key gk = res.get(0);
+      if (code.equals(gk.getCode())) {
+        //  Todo bien, actualizamos la tabla de users, para ese usuario su email se verifica:
+        Users u = super.find((long) gk.getIdUser());
+        u.setEmailChecked(true);
+        super.edit(u);
+        
+        //  Borramos la entrada en la tabla Generate_key  ya no es necesaria:
+       em.createNativeQuery("DELETE FROM generate_key WHERE id_user = ?1").
+        setParameter(1, gk.getIdUser()).
+        executeUpdate(); 
+      } else 
+        sUrl = "../templates/emailNotFound.html";
+       
+    } else {  //  No hay ninguno. O el email ya estaba confirmado (le ha dado 2 veces), o están intentando algo
+     
+      sUrl = "../templates/emailNotFound.html";
+    }
+
+    return Response
+      .temporaryRedirect(URI.create(sUrl))
+      .build();
+    
+  }
+  
+	
+	Error que me da a veces:
+	
+	
+	type Exception report
+
+messageInternal Server Error
+
+descriptionThe server encountered an internal error that prevented it from fulfilling this request.
+
+exception
+
+javax.servlet.ServletException: Servlet.init() for servlet service.ApplicationConfig threw exception
+root cause
+
+java.lang.RuntimeException: javax.naming.NamingException: Lookup failed for 'com/sun/jersey/config/CDIExtension' in SerialContext[myEnv={java.naming.factory.initial=com.sun.enterprise.naming.impl.SerialInitContextFactory, java.naming.factory.state=com.sun.corba.ee.impl.presentation.rmi.JNDIStateFactoryImpl, java.naming.factory.url.pkgs=com.sun.enterprise.naming} [Root exception is javax.naming.NameNotFoundException: CDIExtension not found]
+root cause
+
+javax.naming.NamingException: Lookup failed for 'com/sun/jersey/config/CDIExtension' in SerialContext[myEnv={java.naming.factory.initial=com.sun.enterprise.naming.impl.SerialInitContextFactory, java.naming.factory.state=com.sun.corba.ee.impl.presentation.rmi.JNDIStateFactoryImpl, java.naming.factory.url.pkgs=com.sun.enterprise.naming} [Root exception is javax.naming.NameNotFoundException: CDIExtension not found]
+root cause
+
+javax.naming.NameNotFoundException: CDIExtension not found
+note The full stack traces of the exception and its root causes are available in the GlassFish Server Open Source Edition 4.1.2 logs.
+
+
+
+
+Display name:
+
+jdbc:mysql://localhost:3306/nineheightdbv3?zeroDateTimeBehavior=convertToNull [nineheightusr on Default schema]
+
+
+DatabaseURL:
+
+jdbc:mysql://localhost:3306/nineheightdbv3?zeroDateTimeBehavior=convertToNull
+
+jdbc:mysql://java-database.cv6bh1mznlu2.eu-west-1.rds.amazonaws.com:3306/nineheightdbv3?zeroDateTimeBehavior=convertToNull
+
+jdbc:mariadb://java-database.cv6bh1mznlu2.eu-west-1.rds.amazonaws.com:3306/nineheightDev?zeroDateTimeBehavior=convertToNull
+
+
+ java-database.cv6bh1mznlu2.eu-west-1.rds.amazonaws.com
+
+
+
+
+
+
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE resources PUBLIC "-//GlassFish.org//DTD GlassFish Application Server 3.1 Resource Definitions//EN" "http://glassfish.org/dtds/glassfish-resources_1_5.dtd">
+<resources>
+    <jdbc-connection-pool allow-non-component-callers="false" associate-with-thread="false" connection-creation-retry-attempts="0" connection-creation-retry-interval-in-seconds="10" connection-leak-reclaim="false" connection-leak-timeout-in-seconds="0" connection-validation-method="auto-commit" datasource-classname="com.mysql.jdbc.jdbc2.optional.MysqlDataSource" fail-all-connections="false" idle-timeout-in-seconds="300" is-connection-validation-required="false" is-isolation-level-guaranteed="true" lazy-connection-association="false" lazy-connection-enlistment="false" match-connections="false" max-connection-usage-count="0" max-pool-size="32" max-wait-time-in-millis="60000" name="mysql_nineheightDev_master01Pool" non-transactional-connections="false" pool-resize-quantity="2" res-type="javax.sql.DataSource" statement-timeout-in-seconds="-1" steady-pool-size="8" validate-atmost-once-period-in-seconds="0" wrap-jdbc-objects="false">
+        <property name="serverName" value="java-database.cv6bh1mznlu2.eu-west-1.rds.amazonaws.com"/>
+        <property name="portNumber" value="3306"/>
+        <property name="databaseName" value="nineheightDev"/>
+        <property name="User" value="master01"/>
+        <property name="Password" value="fdz_rpz3TNE0aja-rnp"/>
+        <property name="URL" value="jdbc:mysql://java-database.cv6bh1mznlu2.eu-west-1.rds.amazonaws.com:3306/nineheightDev?zeroDateTimeBehavior=convertToNull"/>
+        <property name="driverClass" value="com.mysql.jdbc.Driver"/>
+    </jdbc-connection-pool>
+    <jdbc-resource enabled="true" jndi-name="java:app/nineheightDev" object-type="user" pool-name="mysql_nineheightDev_master01Pool"/>
+</resources>
+
+
+
+SHOW CREATE VIEW secuences_mesh_points_details
+
+
+CREATE VIEW secuences_mesh_points_details_V2  AS  
+ select smp.id_secuence AS id_secuence, smp.id_mesh_point AS id_mesh_point, 
+   smp.position AS position, smp.id_mesh_point_secuence_type AS id_mesh_point_secuence_type, 
+	 mp.id AS id, mp.id_user AS id_user, mp.id_token AS id_token, 
+	 mp.id_token_type AS id_token_type, mp.id_contact_surface_hold AS id_contact_surface_hold, 
+	 mp.name AS name, mp.model AS model, mp.node_id AS node_id, 
+	 mp.node_x AS node_x, mp.node_y AS node_y, mp.node_z AS node_z, 
+	 mp.node_angle AS node_angle, mp.warning AS warning, mp.dir_n AS dir_n, 
+	 mp.dir_s AS dir_s, mp.dir_e AS dir_e, mp.dir_w AS dir_w 
+	 from secuences_mesh_points smp join mesh_points mp on((smp.id_mesh_point = mp.id)) ;
+
+
+CREATE VIEW secuences_mesh_points_details  AS  
+ select smp.id_secuence AS id_secuence, smp.id_mesh_point AS id_mesh_point, 
+   smp.position AS position, smp.id_mesh_point_secuence_type AS id_mesh_point_secuence_type, 
+	 mp.id AS id, mp.id_user AS id_user, mp.id_token AS id_token, 
+	 mp.id_token_type AS id_token_type, mp.id_contact_surface_hold AS id_contact_surface_hold, 
+	 mp.name AS name, mp.model AS model, mp.node_id AS node_id, 
+	 mp.node_x AS node_x, mp.node_y AS node_y, mp.node_z AS node_z, 
+	 mp.node_angle AS node_angle, mp.warning AS warning, mp.dir_n AS dir_n, 
+	 mp.dir_s AS dir_s, mp.dir_e AS dir_e, mp.dir_w AS dir_w 
+	 from secuences_mesh_points smp INNER JOIN mesh_points mp on((smp.id_mesh_point = mp.id)) ;
+
+
+
+
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `secuences_mesh_points_details`  AS  select `smp`.`id_secuence` AS `id_secuence`,`smp`.`id_mesh_point` AS `id_mesh_point`,`smp`.`position` AS `position`,`smp`.`id_mesh_point_secuence_type` AS `id_mesh_point_secuence_type`,`mp`.`id` AS `id`,`mp`.`id_user` AS `id_user`,`mp`.`id_token` AS `id_token`,`mp`.`id_token_type` AS `id_token_type`,`mp`.`id_contact_surface_hold` AS `id_contact_surface_hold`,`mp`.`name` AS `name`,`mp`.`model` AS `model`,`mp`.`node_id` AS `node_id`,`mp`.`node_x` AS `node_x`,`mp`.`node_y` AS `node_y`,`mp`.`node_z` AS `node_z`,`mp`.`node_angle` AS `node_angle`,`mp`.`warning` AS `warning`,`mp`.`dir_n` AS `dir_n`,`mp`.`dir_s` AS `dir_s`,`mp`.`dir_e` AS `dir_e`,`mp`.`dir_w` AS `dir_w` from (`secuences_mesh_points` `smp` join `mesh_points` `mp` on((`smp`.`id_mesh_point` = `mp`.`id`))) ;
+
+
+
+
+CREATE VIEW `secuences_mesh_points_details`  AS  
+ select `smp`.`id_secuence` AS `id_secuence`,`smp`.`id_mesh_point` AS `id_mesh_point`,
+   `smp`.`position` AS `position`,`smp`.`id_mesh_point_secuence_type` AS `id_mesh_point_secuence_type`,
+	 `mp`.`id` AS `id`,`mp`.`id_user` AS `id_user`,`mp`.`id_token` AS `id_token`,
+	 `mp`.`id_token_type` AS `id_token_type`,`mp`.`id_contact_surface_hold` AS `id_contact_surface_hold`,
+	 `mp`.`name` AS `name`,`mp`.`model` AS `model`,`mp`.`node_id` AS `node_id`,
+	 `mp`.`node_x` AS `node_x`,`mp`.`node_y` AS `node_y`,`mp`.`node_z` AS `node_z`,
+	 `mp`.`node_angle` AS `node_angle`,`mp`.`warning` AS `warning`,`mp`.`dir_n` AS `dir_n`,
+	 `mp`.`dir_s` AS `dir_s`,`mp`.`dir_e` AS `dir_e`,`mp`.`dir_w` AS `dir_w` 
+	 from (`secuences_mesh_points` `smp` join `mesh_points` `mp` on((`smp`.`id_mesh_point` = `mp`.`id`))) ;
+
+
+	getDomain: function(){
+		return 'https://dev-app.nineheight.com';
+	},
+
+
+	ALTER TABLE sequences ADD distance FLOAT NULL AFTER id_sequence_style;
+
+
+jdbc:mysql://java-database.cv6bh1mznlu2.eu-west-1.rds.amazonaws.com:3306/?user=master01
+
+
+ AÑADIR EL CAMPO visible a la tabla sequences:
+
+  ALTER TABLE `sequences` ADD `visible` BOOLEAN NOT NULL DEFAULT TRUE AFTER `distance`;
+
+
+
+  ALTER TABLE `feedback_users_sequences` ADD CONSTRAINT `feedback_users` FOREIGN KEY (`id_user`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+	
+	
+	ALTER TABLE `feedback_users_sequences` ADD CONSTRAINT `feedback_sequences` FOREIGN KEY (`id_sequence`) REFERENCES `sequences`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+	
+  ALTER TABLE `feedback_users_sequences` CHANGE `id_climbing_grade` `id_grade` INT(11) NOT NULL;
+	
+	
+	
+	SELECT csh.*, count(mp.id_token) FROM contact_surface_hold csh LEFT JOIN mesh_points mp ON(csh.id = mp.id_contact_surface_hold)
+ GROUP by mp.id_token
+ 
+ SELECT csh.*, mp.id_token FROM contact_surface_hold csh LEFT JOIN mesh_points mp ON(csh.id = mp.id_contact_surface_hold)
+ GROUP by csh.id, mp.id_token
+ 
+ 
+ SELECT * FROM mesh_points mp LEFT JOIN contact_surface_hold csh ON(mp.id_contact_surface_hold = csh.id)
+ Where csh.id_hold = 196
+ 
+ SELECT h.* FROM holds h LEFT JOIN contact_surface_hold csh ON(csh.id_hold = h.id) LEFT JOIN mesh_points mp ON(mp.id_contact_surface_hold = csh.id)
+
+
+ SELECT h.*, csh.id, mp.id FROM holds h 
+		LEFT JOIN contact_surface_hold csh ON(csh.id_hold = h.id) 
+		LEFT JOIN mesh_points mp ON(mp.id_contact_surface_hold = csh.id)
+ WHERE h.id = 196
+ 
+ SELECT h.*, csh.id csh_id, mp.id mp_id, mp.id_token  FROM holds h 
+		LEFT JOIN contact_surface_hold csh ON(csh.id_hold = h.id) 
+		LEFT JOIN mesh_points mp ON(mp.id_contact_surface_hold = csh.id)
+ WHERE h.id = 196
+ 
+ 
+ 
+ SELECT h.*, count(csh.id) as countCSH, count(mp.id) as countMP  FROM holds h 
+		LEFT JOIN contact_surface_hold csh ON(csh.id_hold = h.id) 
+		LEFT JOIN mesh_points mp ON(mp.id_contact_surface_hold = csh.id)
+ GROUP BY h.id 
+ 
+ SELECT h.*, count(csh.id) as countCSH, count(mp.id) as countMP  FROM holds h 
+		LEFT JOIN contact_surface_hold csh ON(csh.id_hold = h.id) 
+		LEFT JOIN mesh_points mp ON(mp.id_contact_surface_hold = csh.id)
+ GROUP BY h.id
+ 
+ 
+
+
+Orden de petición: 
+
+	1º Montaje y mantenimiento informático: 11 h. (1º)
+  1º Operaciones auxiliares (Explotación)(: 8 h. (2º)
+	
+	2º Ofimática y archivo documentos: 8 h. (1º)
+	2º Redes: 8 h. (2º)
+	
+	3º Sistemas Informáticos (DAM): 7 h. (1º)
+	
+	4º Diseño Interfaces (DAM): 6 h. (2º. Tarde)
+	
+	
+	27473339T
+	Escalada-top11
+	
+	
+	 Learn how to resolve the issue at https://developer.android.com/studio/build/dependencies#duplicate_classes.
+
+
+
+
+
+-->
+
+
+
+
+
+
+

@@ -1,0 +1,80 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8"/>
+    <title>Ejercicio Listado Personas. AJAX</title>
+    <script type="text/javascript">
+		
+			
+			const cargaContenido = (url, metodo, funcion, parametros)=>{
+				var cab = {
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					method: metodo,
+					body: JSON.stringify(parametros)    
+				};
+				console.log("cab: ", cab);
+				fetch(url, cab)
+					.then(r => r.json())
+				//	.then(datos => console.log(datos))  //  se descomenta esta línea y respuesta a text (r.text() ), para ver el error del servidor.
+					.then(datos => funcion(datos))
+					.catch( e => console.error('error al pedir los datos. ', e));
+			}
+     
+      
+      function sendLogin() {
+        var url = "login.php";
+				var pa =  {
+					servicio: "inicio_sesion",
+					email: document.querySelector("#email").value,
+					clave: document.querySelector("#clave").value
+				}
+				console.log("pa ", pa);
+        cargaContenido(url, "POST", respuesta, pa) 
+      }
+
+			
+			function respuesta(res){
+				if ((res.estado) && (res.estado == "NO")) {
+					alert("Error. Usuario y/o clave incorrectos");
+				} else {
+					//  Login positivo. Guardamos en el localStorage:
+					localStorage.nombreUsuario = res.nombre + " " + res.apellidos;
+					localStorage.JWT = res.JWT;
+					//  Redireccionamos:
+					location.href="lista_personas.html";
+				}
+			}
+			
+      window.onload = function() {
+        document.getElementById("btEnviar").onclick = sendLogin;
+      }
+			
+    </script>
+  </head>
+  <body>
+    <h1>Registro de Usuarios</h1>
+    <form>
+      <label for="email">EMAIL: </label>
+      <input type="text" id="email" name="email" value="rigo@mail.com" />
+      
+      <br/>
+      <label for="clave">CLAVE:</label>
+      <input type="text" id="clave" name="clave" value="" />
+      <br/>
+      <br/>
+      <br/>
+      <input type="button" value="ENVIAR" id="btEnviar" />
+    </form>
+
+  </body>
+</html>
+
+
+
+
+
+
+
